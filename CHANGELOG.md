@@ -11,6 +11,8 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 - Documented product boundaries, target architecture, security model, licensing review process, and milestone roadmap.
 - Added contribution guidance, repository hygiene files, and pull request template.
 - Added a GitHub Actions documentation-integrity workflow and a local-link validator.
+- Vendored Anti Slop v3.2.24 core and all five supplemental skills for project-scoped AI development, with upstream license notices preserved.
+- Added QIVRA agent instructions, Anti Slop installation/update documentation, and an unfilled website design brief for product-owner direction.
 
 ### Notes
 - This foundation milestone does not represent a runnable product release.
