@@ -44,3 +44,9 @@ jobs:
 
       - name: Build website
         run: npm run build
+
+      - name: Install Chromium for browser checks
+        run: npx playwright install --with-deps chromium
+
+      - name: Run browser quality checks
+        run: npm run test:e2e

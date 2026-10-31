@@ -42,3 +42,9 @@ out/
 tmp/
 temp/
 artifacts/
+
+# Playwright browser test output
+playwright-report/
+test-results/
+apps/website/playwright-report/
+apps/website/test-results/

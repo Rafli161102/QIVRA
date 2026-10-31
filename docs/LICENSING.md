@@ -4,7 +4,7 @@
 
 QIVRA's original source is licensed under Apache-2.0. This does not relicense third-party software or grant rights to third-party names, trademarks, recipes, plugins, examples, or datasets.
 
-No third-party runtime dependency is currently integrated into the repository. The entries below are candidates and review requirements, not approvals to redistribute an artifact.
+The website workspace uses Next.js and React at runtime. Playwright is included only as development tooling for browser verification. Other target architecture dependencies remain candidates and are not approved for integration.
 
 ## Required review for every dependency
 
@@ -48,10 +48,14 @@ Status: **Not integrated — per-artifact legal and technical review required.**
 |---|---|---|---|---|
 | OpenRewrite core | Not selected | Java analysis / transformation adapter | Verify exact artifact | Not integrated |
 | OpenRewrite recipe modules | Not selected | Migration recipes | Verify each artifact independently | Not integrated |
-| TypeScript dependencies | Not selected | API / dashboard | Verify package and transitive licenses | Not integrated |
+| Next.js | 16.4.3 | Website runtime | MIT | Integrated; transitive graph pending lockfile |
+| React / React DOM | 19.3.1 | Website runtime | MIT | Integrated; transitive graph pending lockfile |
+| `@playwright/test` | 1.64.1 | Development-only browser checks | Apache-2.0 | Integrated; notice retained |
+| TypeScript | 5.9.3 | Website type checking | Apache-2.0 | Integrated in website workspace |
+| `@types/node`, `@types/react`, `@types/react-dom` | Pinned in package manifest | Development typings | MIT | Integrated in website workspace |
 | Container runtime | Deployment-dependent | Worker isolation | Review distribution and hosting terms | Not integrated |
 
-Update this table whenever a dependency is proposed, added, upgraded, or removed. A lockfile and generated software bill of materials (SBOM) should accompany the first executable milestone.
+Update this table whenever a dependency is proposed, added, upgraded, or removed. The direct versions above are recorded, but the full transitive dependency graph has not been locked because a root npm lockfile is not yet committed. Generate and review a lockfile and software bill of materials (SBOM) before the first production release.
 
 ## Release gate
 

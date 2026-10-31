@@ -30,13 +30,15 @@ Quality commands:
 npm run typecheck
 npm run build
 npm run check
+npx playwright install chromium
+npm run test:e2e
 ```
 
 ## Implementation notes
 
 - The root package uses npm workspaces and delegates commands to `apps/website`.
 - Direct framework dependencies are pinned in the website package manifest.
-- No external font, icon, animation, or component package is required for this foundation.
+- No external font, icon, animation, or component package is required by the production website. Playwright is a development-only test dependency.
 - No logo, custom illustration, customer imagery, or fabricated product screenshot is included.
 - The CSS uses the derived muted text shade `#555A52` for readable secondary copy. Machine Grey is reserved for non-text annotation.
 - The migration sequence is explicitly presented as an intended workflow, not a live scan.
@@ -58,6 +60,6 @@ Machine Grey is not used for small text because it does not reach normal-text co
 
 ## Validation limits
 
-The code was authored through repository operations. This execution environment cannot install npm dependencies or run a local Next.js build. The GitHub Actions website-check workflow runs type checking and a production build on the pull request.
+The website-check GitHub Actions workflow installs dependencies, runs TypeScript checks, creates a production build, starts that build, and executes the Chromium end-to-end suite.
 
-The dependency manifests pin direct package versions. The npm lockfile must be generated and committed from a network-enabled checkout before treating dependency installation as fully reproducible. Do not describe the website as build-verified until the workflow passes.
+The dependency manifests pin direct package versions. The npm lockfile must still be generated and committed from a network-enabled checkout before treating the complete dependency graph as reproducible. CI currently installs using npm without a committed lockfile.

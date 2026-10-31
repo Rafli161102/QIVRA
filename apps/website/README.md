@@ -5,19 +5,22 @@ Public website foundation for QIVRA, implemented with Next.js App Router and Typ
 ## Requirements
 
 - Node.js 20.9 or newer
-- npm 10 or newer
+- npm
 
 ## Commands
 
-Run these commands from the repository root:
+Run from the repository root:
 
 ```bash
 npm install
 npm run dev
 npm run typecheck
 npm run build
-npm run start
+npx playwright install chromium
+npm run test:e2e
 ```
+
+Playwright runs the Chromium browser suite against the production build. Build the website before running the end-to-end tests.
 
 ## Design direction
 
@@ -25,4 +28,4 @@ The website follows the root [DESIGN.md](../../DESIGN.md): Engineering Atlas, wi
 
 The current page is a factual pre-alpha product overview. It labels the modernization workflow and Java scope as planned. It does not present an operational analyzer, fabricated scan output, customer evidence, or unimplemented controls.
 
-No bespoke logo, illustration, or icon set is included. The visual system uses typography, CSS layout, rules, and semantic HTML.
+No bespoke logo, illustration, or icon set is included. The visual system uses typography, CSS layout, rules, and semantic HTML. Playwright is a development-only dependency and is not bundled into the website.

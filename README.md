@@ -56,7 +56,7 @@ npm install
 npm run dev
 ```
 
-See [docs/WEBSITE.md](docs/WEBSITE.md) for setup and implementation details.
+Run type checks and the production build with `npm run typecheck` and `npm run build`. For browser verification, build first, install Chromium using `npx playwright install chromium`, then run `npm run test:e2e`. See [docs/WEBSITE.md](docs/WEBSITE.md) for setup and implementation details.
 
 ## Planned architecture
 

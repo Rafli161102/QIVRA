@@ -39,7 +39,7 @@ export default function HomePage() {
       <div className="page-shell" id="top">
         <SiteHeader />
 
-        <main id="main-content">
+        <main id="main-content" tabIndex={-1}>
           <section className="hero-section" aria-labelledby="hero-title">
             <div className="hero-copy">
               <p className="eyebrow">Engineering Atlas / Field note 001</p>
@@ -82,7 +82,7 @@ export default function HomePage() {
           <section className="principles-section section-block" id="principles">
             <div className="section-rail">
               <p className="section-index">01 / Operating principles</p>
-              <h2>Change starts with evidence.</h2>
+              <h2>Change needs a reason. And a way back.</h2>
               <p className="section-intro">
                 Modernization affects more than syntax. QIVRA is being
                 designed around traceable decisions and controlled change.
@@ -168,23 +168,28 @@ export default function HomePage() {
                 direction are documented. The software analyzer has not been
                 released.
               </p>
-              <ul className="milestone-list" aria-label="QIVRA development milestones">
-                <li className="milestone-row">
-                  <span className="milestone-code">P0.1</span>
-                  <span className="milestone-work">Product and engineering foundation</span>
-                  <span className="milestone-state complete">Complete</span>
-                </li>
-                <li className="milestone-row">
-                  <span className="milestone-code">P0.2</span>
-                  <span className="milestone-work">Repository and build-system analyzer</span>
-                  <span className="milestone-state next">Next</span>
-                </li>
-                <li className="milestone-row">
-                  <span className="milestone-code">P0.3 onward</span>
-                  <span className="milestone-work">Assessment, transformation, validation, and reporting</span>
-                  <span className="milestone-state planned">Planned</span>
-                </li>
-              </ul>
+              <div className="milestone-table" role="table" aria-label="QIVRA development milestones">
+                <div className="milestone-row milestone-head" role="row">
+                  <span role="columnheader">Milestone</span>
+                  <span role="columnheader">Work</span>
+                  <span role="columnheader">Status</span>
+                </div>
+                <div className="milestone-row" role="row">
+                  <span role="cell">P0.1</span>
+                  <span role="cell">Product and engineering foundation</span>
+                  <span className="milestone-state complete" role="cell">Complete</span>
+                </div>
+                <div className="milestone-row" role="row">
+                  <span role="cell">P0.2</span>
+                  <span role="cell">Repository and build-system analyzer</span>
+                  <span className="milestone-state next" role="cell">Next</span>
+                </div>
+                <div className="milestone-row" role="row">
+                  <span role="cell">P0.3 onward</span>
+                  <span role="cell">Assessment, transformation, validation, and reporting</span>
+                  <span className="milestone-state planned" role="cell">Planned</span>
+                </div>
+              </div>
               <a
                 className="status-link"
                 href="https://github.com/Rafli161102/QIVRA/blob/main/docs/ROADMAP.md"
