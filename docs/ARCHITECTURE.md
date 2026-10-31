@@ -47,7 +47,7 @@ This document describes the intended architecture. It is not an implementation i
           [Artifact / Report Store]
 ```
 
-The diagram is conceptual. No production deployment topology is committed yet.
+The diagram is conceptual. No production deployment topology is committed yet. The P0.2 local analyzer is implemented as a Python standard-library module for static Maven/Gradle inventory; it is not the planned Java 21 transformation engine and does not execute customer build scripts.
 
 ## Control plane
 

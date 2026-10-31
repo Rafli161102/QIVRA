@@ -1,0 +1,32 @@
+name: Analyzer checks
+
+on:
+  push:
+    branches: [main, develop, "feat/**"]
+    paths:
+      - "engine/analyzer/**"
+      - ".github/workflows/analyzer-check.yml"
+  pull_request:
+    paths:
+      - "engine/analyzer/**"
+      - ".github/workflows/analyzer-check.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Run analyzer unit tests
+        working-directory: engine/analyzer
+        run: python -m unittest discover -s tests -v
+      - name: Verify CLI JSON output
+        run: |
+          python -m engine.analyzer.qivra_analyzer engine/analyzer/fixtures --pretty > /tmp/qivra-inventory.json
+          python -c "import json; d=json.load(open('/tmp/qivra-inventory.json')); assert d['schema_version'] == '1.0.0'; assert d['summary']['project_count'] >= 2"

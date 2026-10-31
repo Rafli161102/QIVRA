@@ -56,7 +56,7 @@ npm ci
 npm run dev
 ```
 
-Run type checks and the production build with `npm run typecheck` and `npm run build`. For browser verification, build first, install Chromium using `npx playwright install chromium`, then run `npm run test:e2e`.
+Run type checks and the production build with `npm run typecheck` and `npm run build`. For browser verification, build first, install Chromium using `npx playwright install chromium`, then run `npm run test:e2e`.\n\nRun the static repository analyzer with Python 3.10+: `python -m engine.analyzer.qivra_analyzer ./path/to/repository --pretty`. It inventories Maven/Gradle declarations without executing build scripts; see [docs/ANALYZER.md](docs/ANALYZER.md).
 
 The website includes production SEO metadata, a production-only sitemap, non-indexable preview robots behavior, and baseline response security headers. See [docs/WEBSITE.md](docs/WEBSITE.md) and [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md) for implementation and Vercel setup.
 
@@ -72,7 +72,7 @@ The website includes production SEO metadata, a production-only sitemap, non-ind
 | Persistence | Users, projects, jobs, audit records | PostgreSQL |
 | Queue / coordination | Asynchronous job dispatch | Redis-compatible queue |
 
-The website is the first implemented application workspace. The remaining components are a target architecture, not a claim that they have been implemented.
+The website and the local read-only Maven/Gradle analyzer are the first implemented workspaces. The API, Java transformation engine, workers, and remaining components are target architecture, not claims that they have been implemented.
 
 ## Repository layout
 
@@ -100,7 +100,7 @@ See [CHANGELOG.md](CHANGELOG.md) for recorded changes and [docs/ROADMAP.md](docs
 | Milestone | Objective | Status |
 |---|---|---|
 | P0.1 | Product, architecture, security, and licensing foundation | Complete |
-| P0.2 | Repository and build-system analyzer | Next |
+| P0.2 | Repository and build-system analyzer | In progress |
 | P0.3 | Modernization assessment and migration plan | Planned |
 | P0.4 | Transformation engine integration | Planned |
 | P0.5 | Isolated validation pipeline | Planned |
