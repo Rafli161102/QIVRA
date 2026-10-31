@@ -10,10 +10,12 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 - Established the QIVRA product overview and initial Java modernization vertical slice.
 - Documented product boundaries, target architecture, security model, licensing review process, and milestone roadmap.
 - Added contribution guidance, repository hygiene files, and pull request template.
+- Added a GitHub Actions documentation-integrity workflow and a local-link validator.
 
 ### Notes
 - This foundation milestone does not represent a runnable product release.
 - No transformation engine or third-party runtime dependency has been integrated yet.
+- Current CI validates required documentation and relative Markdown links only; application build and test jobs will be added with P0.2.
 
 ## Release policy
 
