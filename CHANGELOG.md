@@ -14,16 +14,21 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 - Vendored Anti Slop v3.2.24 core and all five supplemental skills for project-scoped AI development, with upstream license notices preserved.
 - Added QIVRA agent instructions and Anti Slop installation/update documentation.
 - Added the product-owner-approved Engineering Atlas design direction, including the Migration Trace identity motif, conceptual palette, typography direction, layout principles, and design dials.
+- Added the first Next.js website workspace with an Engineering Atlas product overview, responsive layout, semantic Migration Trace sequence, and website verification workflow.
+- Added website setup and implementation notes in `docs/WEBSITE.md`.
 
 ### Changed
 - Promoted the website design brief from an unanswered questionnaire to a record of the approved Engineering Atlas direction.
 - Updated the README and Anti Slop operating notes to point to the authoritative `DESIGN.md`.
+- Updated the README with the website workspace and current implementation status.
 
 ### Notes
-- This foundation milestone does not represent a runnable product release.
-- The design direction is documented; no website, logo, design asset, or UI component has been implemented.
-- No transformation engine or third-party runtime dependency has been integrated yet.
-- Current CI validates required documentation and relative Markdown links only; application build and test jobs will be added with P0.2.
+- The public website foundation is separate from the QIVRA analyzer and modernization engine. No migration service is available yet.
+- The website workflow and Java scope are presented as planned product behavior, not released capabilities.
+- No logo, custom illustration, customer imagery, testimonials, benchmark figures, or performance claims were added.
+- The website build must pass the website-check workflow before it is considered build-verified.
+- The npm lockfile remains to be generated from a network-enabled checkout.
+- No transformation engine or third-party transformation runtime dependency has been integrated yet.
 
 ## Release policy
 

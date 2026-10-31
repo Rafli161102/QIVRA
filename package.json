@@ -1,0 +1,13 @@
+{
+  "name": "qivra",
+  "private": true,
+  "workspaces": ["apps/website"],
+  "engines": { "node": ">=20.9.0" },
+  "scripts": {
+    "dev": "npm run dev --workspace @qivra/website",
+    "build": "npm run build --workspace @qivra/website",
+    "start": "npm run start --workspace @qivra/website",
+    "typecheck": "npm run typecheck --workspace @qivra/website",
+    "check": "npm run typecheck && npm run build"
+  }
+}

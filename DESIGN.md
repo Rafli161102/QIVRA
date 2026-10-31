@@ -61,9 +61,10 @@ The proposed palette is deliberately paper-led rather than dark-first. It separa
 ### Color rules
 
 - Treat Archive Paper and Carbon Ink as the core pair.
-- Use Machine Grey for secondary hierarchy, not for small low-contrast body text.
+- Use Machine Grey for non-text annotation and subtle diagram treatment, not small body text. Use the derived readable text shade `#555A52` for secondary copy.
 - Reserve Oxide Signal for moments that need attention. Do not turn every link, icon, border, and button into an accent.
 - Do not introduce extra brand colors without a documented semantic role.
+- Use the darker derived accent shade `#98452D` when Oxide Signal is text on a light surface. White text on the Oxide Signal fill is reserved for the primary action treatment.
 - Check every text and non-text pairing against WCAG AA before implementation. Do not claim compliance based on visual inspection.
 - Do not force dark mode on the marketing website. A future engineering workspace may justify a separate dark theme based on actual usage needs.
 
