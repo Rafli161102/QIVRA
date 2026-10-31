@@ -32,7 +32,7 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 - No logo, custom illustration, customer imagery, testimonials, benchmark figures, or performance claims were added.
 - The website build must pass the website-check workflow before it is considered build-verified.
 - Playwright is a development-only dependency and its Apache-2.0 license notice is retained.
-- The npm lockfile remains to be generated from a network-enabled checkout, so the full transitive dependency graph is not yet pinned. CI still uses `npm install`; switching to `npm ci` is a follow-up after the lockfile is committed.
+- Added the npm workspace lockfile. CI now installs from the committed lockfile using `npm ci`; direct and transitive license review and SBOM generation remain production release requirements.
 - No transformation engine or third-party transformation runtime dependency has been integrated yet.
 - Vercel preview deployment remains pending project connection; no deployment URL or production domain is claimed.
 

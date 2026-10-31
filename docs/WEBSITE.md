@@ -23,7 +23,7 @@ Requirements: Node.js 20.9 or newer and npm 10.9.9.
 From the repository root:
 
 ```bash
-npm install
+npm ci
 npm run dev
 ```
 
@@ -70,7 +70,7 @@ The GitHub repository is not yet connected to Vercel. No live preview URL is ava
 
 - The root package uses npm workspaces and delegates commands to `apps/website`.
 - The root `package.json` declares `npm@10.9.9` as the package manager.
-- Direct framework dependencies are pinned in the website package manifest.
+- Direct package versions and the resolved transitive dependency graph are pinned in the root `package-lock.json`.
 - No external font, icon, animation, or component package is required by the production website. Playwright is a development-only test dependency.
 - No logo, custom illustration, customer imagery, or fabricated product screenshot is included.
 - The CSS uses the derived muted text shade `#555A52` for readable secondary copy. Machine Grey is reserved for non-text annotation.
@@ -93,8 +93,8 @@ Machine Grey is not used for small text because it does not reach normal-text co
 
 ## Validation
 
-The website-check GitHub Actions workflow installs dependencies, runs TypeScript checks, creates a production build, starts that build, and executes the Chromium end-to-end suite.
+The website-check GitHub Actions workflow installs dependencies with `npm ci`, runs TypeScript checks, creates a production build, starts that build, and executes the Chromium end-to-end suite.
 
 The browser suite checks the rendered page, anchor navigation, CTA links, keyboard skip-link focus, link target sizes, text/action contrast, responsive overflow from 320px to 1440px, reduced motion, SEO metadata, preview crawler rules, and baseline response headers.
 
-The dependency manifests pin direct package versions, and the root package declares `npm@10.9.9`. The npm lockfile must still be generated and committed from a network-enabled checkout before treating the complete dependency graph as reproducible. CI currently uses `npm install`; switch it to `npm ci` after the lockfile is committed.
+The root lockfile pins the resolved transitive dependency graph. A package-by-package transitive license review and SBOM remain release requirements.

@@ -6,21 +6,20 @@ The website is build-verified in GitHub Actions, but it has not yet been connect
 
 Use Vercel Preview Deployments for review. Keep `main` as the Production Branch so pushes to `develop` and feature branches remain previews rather than becoming the public production deployment.
 
-## Before importing into Vercel
+## Dependency reproducibility
 
-Generate and commit the npm lockfile from a network-enabled checkout at the repository root:
+The root `package-lock.json` is generated from the npm workspace install and committed alongside the root package manifest. It pins the resolved direct and transitive dependency graph used by CI and Vercel.
+
+Use the same npm workspace setup when installing:
 
 ```bash
-npm install --package-lock-only --ignore-scripts
 npm ci
 npm run typecheck
 npm run build
 npm run test:e2e
 ```
 
-Review the generated `package-lock.json` and commit it with the package manifests. Once the lockfile is committed, change the website-check workflow from `npm install` to `npm ci` so CI and Vercel can use the same dependency graph.
-
-The root `package.json` declares the workspace manager as `npm@10.9.9`. Node.js 22 is the CI baseline.
+The root `package.json` declares the package manager as `npm@10.9.9`. Node.js 22 is the CI baseline. Do not regenerate or update the lockfile as part of a routine production deployment; update it intentionally when dependency manifests change, then review the resulting diff and run the full validation suite.
 
 ## Create the Vercel project
 
@@ -85,5 +84,5 @@ Do not promote to production until the real canonical domain is configured and t
 ## Known limitations
 
 - Vercel is not connected to this repository yet, so no preview URL exists.
-- The npm lockfile is not committed yet. This is the remaining reproducibility blocker before changing CI to `npm ci`.
+- A complete SBOM and package-by-package transitive license review remain required before the first production release, even though the dependency graph is now locked.
 - No custom Open Graph image, favicon, or logo is included. Bespoke brand assets remain a separate product-owner decision.
