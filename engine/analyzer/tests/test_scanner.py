@@ -35,15 +35,24 @@ class AnalyzerTests(unittest.TestCase):
             self.write(root, "service/pom.xml", "<project><artifactId>service</artifactId></project>")
             result = analyze(root)
             self.assertEqual(result["summary"]["project_count"], 3)
-            self.assertEqual(result["projects"][0]["modules"], ["core", "service"])
+            root_project = next(project for project in result["projects"] if project["path"] == ".")
+            self.assertEqual(root_project["modules"], ["core", "service"])
 
     def test_gradle_settings_java_toolchain_and_dependency(self):
         with tempfile.TemporaryDirectory() as temp:
             root = Path(temp)
             self.write(root, "settings.gradle.kts", 'rootProject.name = "sample"\ninclude(":app", ":lib")')
-            self.write(root, "build.gradle.kts", """plugins { id("java") version "1.0" }
-java { toolchain { languageVersion.set(JavaLanguageVersion.of(17)) } }
-dependencies { implementation("org.slf4j:slf4j-api:2.0.9") }
+            self.write(root, "build.gradle.kts", """plugins {
+    id("java") version "1.0"
+}
+java {
+    toolchain {
+        languageVersion.set(JavaLanguageVersion.of(17))
+    }
+}
+dependencies {
+    implementation("org.slf4j:slf4j-api:2.0.9")
+}
 """)
             result = analyze(root)
             project = result["projects"][0]

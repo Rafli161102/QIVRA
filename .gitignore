@@ -48,3 +48,8 @@ playwright-report/
 test-results/
 apps/website/playwright-report/
 apps/website/test-results/
+
+# Python analyzer
+__pycache__/
+*.py[cod]
+.pytest_cache/

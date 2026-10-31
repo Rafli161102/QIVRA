@@ -129,7 +129,7 @@ def _parse_gradle(path, root):
 
     dependencies = []
     dep_pattern = re.compile(
-        r"^\s*(implementation|api|compileOnly|runtimeOnly|testImplementation|testRuntimeOnly|annotationProcessor)\s*\(?\s*['\"]([^:'\"]+):([^:'\"]+)(?::([^'\"]+))?['\"]",
+        r"\b(implementation|api|compileOnly|runtimeOnly|testImplementation|testRuntimeOnly|annotationProcessor)\s*\(?\s*['\"]([^:'\"]+):([^:'\"]+)(?::([^'\"]+))?['\"]",
         re.MULTILINE,
     )
     for match in dep_pattern.finditer(raw):

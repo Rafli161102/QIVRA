@@ -56,7 +56,9 @@ npm ci
 npm run dev
 ```
 
-Run type checks and the production build with `npm run typecheck` and `npm run build`. For browser verification, build first, install Chromium using `npx playwright install chromium`, then run `npm run test:e2e`.\n\nRun the static repository analyzer with Python 3.10+: `python -m engine.analyzer.qivra_analyzer ./path/to/repository --pretty`. It inventories Maven/Gradle declarations without executing build scripts; see [docs/ANALYZER.md](docs/ANALYZER.md).
+Run type checks and the production build with `npm run typecheck` and `npm run build`. For browser verification, build first, install Chromium using `npx playwright install chromium`, then run `npm run test:e2e`.
+
+Run the static repository analyzer with Python 3.10+: `python -m engine.analyzer.qivra_analyzer ./path/to/repository --pretty`. It inventories Maven/Gradle declarations without executing build scripts; see [docs/ANALYZER.md](docs/ANALYZER.md).
 
 The website includes production SEO metadata, a production-only sitemap, non-indexable preview robots behavior, and baseline response security headers. See [docs/WEBSITE.md](docs/WEBSITE.md) and [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md) for implementation and Vercel setup.
 
