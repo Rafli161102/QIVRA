@@ -23,8 +23,10 @@ REQUIRED_FILES = (
     "docs/DECISIONS/0001-platform-foundation.md",
 )
 
-# Captures the destination from inline links and image links.
-MARKDOWN_LINK = re.compile(r"!?\\[[^\\]]*\\]\\(([^)]+)\\)")
+# Captures destinations from inline Markdown links and image links.
+MARKDOWN_LINK = re.compile(
+    "!?"+ re.escape("[") + ".*?" + re.escape("](") + "(.*?)" + re.escape(")")
+)
 
 
 def markdown_files() -> list[Path]:
