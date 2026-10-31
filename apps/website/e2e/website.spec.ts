@@ -210,7 +210,7 @@ test("SEO metadata is complete and preview deployments are not indexable", async
 
   await expect(page.locator('meta[name="description"]')).toHaveAttribute(
     "content",
-    /inspect legacy software.*Java, Maven, and Gradle/i,
+    /inspecting legacy software.*Java, Maven, and Gradle/i,
   );
   await expect(page.locator('meta[property="og:type"]')).toHaveAttribute("content", "website");
   await expect(page.locator('meta[property="og:site_name"]')).toHaveAttribute("content", "QIVRA");
