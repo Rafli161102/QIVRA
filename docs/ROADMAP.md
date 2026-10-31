@@ -19,23 +19,29 @@
 - Branching, contribution, and changelog policies.
 
 ### P0.2 — Repository and build-system analyzer
-**Status: Next**
+**Status: In progress**
 
 Deliverables:
-- Analyzer module and documented local runtime.
-- Maven single-module and multi-module discovery.
-- Gradle project and settings discovery.
-- Java source/target/release version extraction.
-- Dependency and plugin declaration inventory.
-- Malformed and ambiguous project diagnostics.
-- JSON output schema with stable versioning.
-- Fixture corpus covering valid, malformed, and nested projects.
+- [x] Analyzer module and documented local runtime (Python standard library, CLI).
+- [x] Maven POM discovery and declared multi-module inventory.
+- [x] Gradle build/settings discovery for Groovy and Kotlin DSL.
+- [x] Initial Java source/target/release/toolchain declaration extraction.
+- [x] Literal dependency and plugin declaration inventory.
+- [x] Malformed Maven POM diagnostics with file evidence.
+- [x] Versioned JSON inventory schema and deterministic snapshot digest.
+- [x] Initial fixture corpus for Maven, Gradle, nested, mixed, and malformed projects.
+- [ ] Improve Gradle project-directory mapping, version catalogs, and computed declarations.
+- [ ] Add Maven parent inheritance, profile-aware parsing, and richer diagnostics.
+- [ ] Add Java source-level language/API signals with file and line evidence.
+- [ ] Expand fixture coverage and validate against representative repositories.
 
 Acceptance criteria:
 - Analyzer never executes build scripts during static discovery.
 - Every finding includes evidence or a clear reason why evidence is unavailable.
 - Tests prove behavior for Maven, Gradle, mixed, nested, and malformed fixtures.
 - Output is deterministic for the same input snapshot and analyzer version.
+
+The first implementation is a declaration-level inventory only. It does not resolve dependencies, calculate effective Maven/Gradle models, parse Java source, or produce migration recommendations. P0.2 remains open until the remaining items and acceptance criteria are verified.
 
 ### P0.3 — Modernization assessment and plan
 - Introduce target profiles, initially Java 17.

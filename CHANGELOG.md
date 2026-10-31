@@ -28,7 +28,7 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 - Declared the npm workspace package manager version in the root package manifest.
 
 ### Notes
-- The public website foundation is separate from the QIVRA analyzer and modernization engine. No migration service is available yet.
+- The public website foundation is separate from the QIVRA modernization engine. The P0.2 analyzer is a local static inventory prototype; no hosted migration service or transformation engine is available.
 - The website workflow and Java scope are presented as planned product behavior, not released capabilities.
 - No logo, custom illustration, customer imagery, testimonials, benchmark figures, or performance claims were added.
 - The website build must pass the website-check workflow before it is considered build-verified.

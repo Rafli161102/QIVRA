@@ -1,0 +1,35 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "QIVRA Repository Inventory",
+  "type": "object",
+  "required": ["schema_version", "analyzer", "snapshot", "summary", "projects", "diagnostics"],
+  "properties": {
+    "schema_version": { "const": "1.0.0" },
+    "analyzer": {
+      "type": "object",
+      "required": ["name", "version"],
+      "properties": { "name": { "type": "string" }, "version": { "type": "string" } },
+      "additionalProperties": false
+    },
+    "snapshot": {
+      "type": "object",
+      "required": ["build_files_sha256"],
+      "properties": { "build_files_sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" } },
+      "additionalProperties": false
+    },
+    "summary": {
+      "type": "object",
+      "required": ["project_count", "maven_count", "gradle_count", "diagnostic_count"],
+      "properties": {
+        "project_count": { "type": "integer", "minimum": 0 },
+        "maven_count": { "type": "integer", "minimum": 0 },
+        "gradle_count": { "type": "integer", "minimum": 0 },
+        "diagnostic_count": { "type": "integer", "minimum": 0 }
+      },
+      "additionalProperties": false
+    },
+    "projects": { "type": "array", "items": { "type": "object" } },
+    "diagnostics": { "type": "array", "items": { "type": "object" } }
+  },
+  "additionalProperties": false
+}
