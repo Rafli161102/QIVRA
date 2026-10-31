@@ -41,6 +41,21 @@ npm run check
 - The CSS uses the derived muted text shade `#555A52` for readable secondary copy. Machine Grey is reserved for non-text annotation.
 - The migration sequence is explicitly presented as an intended workflow, not a live scan.
 
+## Initial color contrast checks
+
+The following pairings were calculated using the WCAG relative-luminance contrast formula:
+
+| Foreground | Background | Ratio | Use |
+|---|---|---:|---|
+| `#555A52` | `#EAE6DC` | 5.67:1 | Secondary text on Archive Paper |
+| `#555A52` | `#DED9CE` | 5.02:1 | Secondary text on the workflow surface |
+| `#98452D` | `#EAE6DC` | 5.23:1 | Accent-colored text on Archive Paper |
+| `#98452D` | `#DED9CE` | 4.63:1 | Accent-colored text on the workflow surface |
+| `#FFFFFF` | `#B85C3B` | 4.53:1 | Primary action text on Oxide Signal |
+| `#EAE6DC` | `#202522` | 12.49:1 | Main text on Carbon Ink |
+
+Machine Grey is not used for small text because it does not reach normal-text contrast on Archive Paper. Its role is limited to non-text annotation. Focus indicators and meaningful UI boundaries still require validation against their actual adjacent surfaces.
+
 ## Validation limits
 
 The code was authored through repository operations. This execution environment cannot install npm dependencies or run a local Next.js build. The GitHub Actions website-check workflow runs type checking and a production build on the pull request.

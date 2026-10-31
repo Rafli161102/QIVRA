@@ -82,7 +82,7 @@ export default function HomePage() {
           <section className="principles-section section-block" id="principles">
             <div className="section-rail">
               <p className="section-index">01 / Operating principles</p>
-              <h2>Change needs a reason. And a way back.</h2>
+              <h2>Change starts with evidence.</h2>
               <p className="section-intro">
                 Modernization affects more than syntax. QIVRA is being
                 designed around traceable decisions and controlled change.

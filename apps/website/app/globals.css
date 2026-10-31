@@ -96,6 +96,7 @@ textarea:focus-visible {
 
 .wordmark {
   display: inline-flex;
+  min-height: 44px;
   align-items: baseline;
   gap: 0.75rem;
   flex: 0 0 auto;
@@ -135,6 +136,9 @@ textarea:focus-visible {
 }
 
 .nav-link {
+  display: inline-flex;
+  min-height: 44px;
+  align-items: center;
   color: var(--ink-muted);
 }
 
@@ -142,10 +146,13 @@ textarea:focus-visible {
 .nav-link:focus-visible,
 .header-link:hover,
 .header-link:focus-visible {
-  color: var(--oxide-ink);
+  color: var(--ink);
 }
 
 .header-link {
+  display: inline-flex;
+  min-height: 44px;
+  align-items: center;
   flex: 0 0 auto;
   text-decoration: underline;
   text-underline-offset: 0.3em;
@@ -247,6 +254,9 @@ textarea:focus-visible {
 }
 
 .text-link {
+  display: inline-flex;
+  min-height: 44px;
+  align-items: center;
   color: var(--ink);
   font-size: 0.82rem;
   font-weight: 700;
@@ -396,8 +406,8 @@ textarea:focus-visible {
   width: 0.55rem;
   height: 0.55rem;
   flex: 0 0 auto;
-  border: 1px solid var(--oxide);
-  background: var(--oxide);
+  border: 1px solid var(--ink-muted);
+  background: var(--ink-muted);
 }
 
 .status-ribbon p {
@@ -412,6 +422,9 @@ textarea:focus-visible {
 }
 
 .status-ribbon a {
+  display: inline-flex;
+  min-height: 44px;
+  align-items: center;
   flex: 0 0 auto;
   font-size: 0.76rem;
   font-weight: 700;
@@ -465,7 +478,7 @@ textarea:focus-visible {
 }
 
 .principle-number {
-  color: var(--oxide-ink);
+  color: var(--ink-muted);
   font-family: var(--font-mono);
   font-size: 0.72rem;
 }
@@ -528,14 +541,14 @@ textarea:focus-visible {
 }
 
 .workflow-sequence li:not(:last-child)::after {
-  color: var(--oxide-ink);
+  color: var(--ink-muted);
   content: "/";
 }
 
 .workflow-note {
   margin: 0;
   padding-left: 1rem;
-  border-left: 2px solid var(--oxide);
+  border-left: 2px solid var(--rule);
   color: var(--ink-muted);
   font-size: 0.77rem;
   line-height: 1.7;
@@ -564,7 +577,7 @@ textarea:focus-visible {
   display: inline-block;
   margin-top: 1.6rem;
   padding-block: 0.35rem;
-  border-bottom: 2px solid var(--oxide);
+  border-bottom: 2px solid var(--rule);
   color: var(--ink);
 }
 
@@ -623,8 +636,11 @@ textarea:focus-visible {
   line-height: 1.8;
 }
 
-.milestone-table {
+.milestone-list {
+  margin: 0;
+  padding: 0;
   border-top: 1px solid rgb(234 230 220 / 40%);
+  list-style: none;
 }
 
 .milestone-row {
@@ -637,9 +653,10 @@ textarea:focus-visible {
   font-size: 0.8rem;
 }
 
-.milestone-head {
+.milestone-code {
   color: var(--dark-muted);
-  font-size: 0.62rem;
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
 }
 
 .milestone-state {
@@ -655,7 +672,7 @@ textarea:focus-visible {
 .milestone-state.next {
   color: #fff;
   text-decoration: underline;
-  text-decoration-color: var(--oxide);
+  text-decoration-color: var(--dark-muted);
   text-decoration-thickness: 2px;
   text-underline-offset: 0.25rem;
 }
@@ -665,7 +682,9 @@ textarea:focus-visible {
 }
 
 .status-link {
-  display: inline-block;
+  display: inline-flex;
+  min-height: 44px;
+  align-items: center;
   margin-top: 1.7rem;
   color: var(--paper);
   font-size: 0.8rem;
@@ -681,6 +700,9 @@ textarea:focus-visible {
 }
 
 .footer-wordmark {
+  display: inline-flex;
+  min-height: 44px;
+  align-items: center;
   text-decoration: none;
 }
 
@@ -696,6 +718,9 @@ textarea:focus-visible {
 }
 
 .footer-links a {
+  display: inline-flex;
+  min-height: 44px;
+  align-items: center;
   font-size: 0.75rem;
   font-weight: 700;
 }
@@ -841,12 +866,8 @@ textarea:focus-visible {
     gap: 0.5rem 0.8rem;
   }
 
-  .milestone-row [role="cell"]:last-child {
+  .milestone-row .milestone-state {
     grid-column: 2;
-  }
-
-  .milestone-head [role="columnheader"]:last-child {
-    display: none;
   }
 
   .site-footer {
@@ -903,4 +924,9 @@ textarea:focus-visible {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
   }
+}
+
+
+a[href]:active {
+  opacity: 0.78;
 }
