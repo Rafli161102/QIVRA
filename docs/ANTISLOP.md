@@ -22,7 +22,7 @@ The snapshot contains the core skill and all five supplemental skills: UI, copyw
 
 - `AGENTS.md` points agents to the project-local core and the relevant supplemental skills.
 - `.agents/skills/` stores the exact upstream files from the recorded tree.
-- `DESIGN.md` is intentionally not generated. The visual direction belongs to the product owner and must be supplied before production UI work.
+- The product-owner-approved visual direction is maintained in the root `DESIGN.md`. Anti Slop remains a quality filter and does not replace that direction.
 - These files do not add a dependency to the website bundle, API, or production runtime.
 
 ## Install and update
@@ -50,9 +50,9 @@ Official installation guide: https://github.com/miqdadbadjuber/anti-slop/blob/ma
 1. Read the core skill before UI, copy, accessibility, responsive-layout, or code-comment work.
 2. Load the relevant supplemental skill for the task.
 3. Resolve DURING or AFTER mode according to the core's rules before UI review or design work.
-4. Do not treat Anti Slop as visual direction. A QIVRA product-owner-authored `DESIGN.md` must provide brand, audience, visual references, palette, typography, and motion direction.
+4. Follow the product-owner-approved `DESIGN.md` for brand identity, audience, visual language, palette, typography, layout, and motion. Anti Slop is the quality filter layered on top of that direction.
 5. Do not fabricate customer logos, product screenshots, benchmark results, performance numbers, testimonials, or launch claims.
 6. Use the Delivery Gate and task-specific checklists before considering UI work complete.
 7. Review the licensing notices whenever these upstream files are updated or redistributed.
 
-This integration does not claim that QIVRA's website has been designed or implemented.
+The design direction is documented, but this integration does not claim that QIVRA's website has been designed or implemented.

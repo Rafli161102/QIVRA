@@ -5,7 +5,7 @@
 
 QIVRA is an engineering platform for understanding, planning, and executing software modernization. It helps teams inspect legacy codebases, identify technical risk, apply controlled transformations, and verify results with reproducible validation.
 
-> **Project status:** Pre-alpha. P0.1 foundation is documented; no production migration engine or runnable application has been released.
+> **Project status:** Pre-alpha. P0.1 foundation and product design direction are documented; no production migration engine or runnable application has been released.
 
 ## Product capabilities (target)
 
@@ -36,6 +36,14 @@ Java 8/11 to Java 17 is an initial use case, not a permanent product limitation.
 - **Secure by default:** treat repositories as untrusted input and execute builds in isolated environments.
 - **Transparent licensing:** audit each dependency, plugin, and recipe independently before distribution.
 - **Provider-neutral architecture:** keep orchestration separate from transformation engines.
+
+## Product design direction
+
+QIVRA's approved visual direction is **Engineering Atlas**: an industrial-editorial engineering publication language built around precise typography, paper-led surfaces, annotated technical diagrams, and varied editorial composition.
+
+Its signature motif, **Migration Trace**, explains the path from legacy source through inspection, transformation, and validation. The direction uses a restrained palette and calm motion. It does not rely on generic SaaS templates or fabricated product evidence.
+
+Read [DESIGN.md](DESIGN.md) for the authoritative visual direction and [docs/WEBSITE-DESIGN-BRIEF.md](docs/WEBSITE-DESIGN-BRIEF.md) for the recorded product-owner decision. The direction is approved, but no website, logo, design asset, or UI component has been implemented.
 
 ## Planned architecture
 
@@ -89,7 +97,7 @@ See [CHANGELOG.md](CHANGELOG.md) for recorded changes and [docs/ROADMAP.md](docs
 
 ## AI-assisted development quality
 
-QIVRA vendors the [Anti Slop agent skills](https://github.com/miqdadbadjuber/anti-slop) for UI, accessibility, responsive layout, copywriting, and code-comment hygiene. The project snapshot and update procedure are documented in [docs/ANTISLOP.md](docs/ANTISLOP.md). Read [AGENTS.md](AGENTS.md) before AI-assisted development. The website design direction is intentionally not pre-filled; it must be authored with the product owner before production UI work begins.
+QIVRA vendors the [Anti Slop agent skills](https://github.com/miqdadbadjuber/anti-slop) for UI, accessibility, responsive layout, copywriting, and code-comment hygiene. The project snapshot and update procedure are documented in [docs/ANTISLOP.md](docs/ANTISLOP.md). Read [AGENTS.md](AGENTS.md) before AI-assisted development. All UI work must follow the product-owner-approved [design direction](DESIGN.md) and pass the Anti Slop Delivery Gate.
 
 ## Getting started
 

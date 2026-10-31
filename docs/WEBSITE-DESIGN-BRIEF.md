@@ -1,6 +1,6 @@
 # QIVRA website design brief
 
-> Status: awaiting product-owner direction. This document is a question sheet, not a visual design system. Do not treat the blank fields as permission to invent a visual style.
+> Status: direction approved and promoted to the authoritative root `DESIGN.md` on 2026-11-01. This brief records the product-owner decision; implementation details remain subject to testing.
 
 ## Product facts
 
@@ -10,53 +10,67 @@
 - Current tagline: Transform Legacy. Engineer the Future.
 - Initial implementation focus: Java modernization for Maven and Gradle projects.
 
-## Direction to be supplied by the product owner
+## Approved direction
 
 ### 1. Brand personality
-Describe 3–5 traits that should be felt in the interface.
 
-**Your direction:** _Not supplied yet._
+**Approved:** Investigative, precise, industrial, editorial, and accountable.
 
 ### 2. Audience and primary task
-Who is the primary website audience at launch, and what should they be able to understand or do first?
 
-**Your direction:** _Not supplied yet._
+**Approved recommendation:** Primary audience is platform engineers, software architects, and technical leads responsible for legacy systems. Secondary audience is engineering managers and CTOs.
+
+The website should help technical visitors understand QIVRA's analysis and modernization workflow, the initial Java/Maven/Gradle scope, and the distinction between current implementation and planned capabilities.
 
 ### 3. Visual references
-Provide website/product references and explain what specifically works or does not work in each reference. References are for discussion, not copying.
 
-**Your direction:** _Not supplied yet._
+**Approved direction:** Engineering Atlas. Use the visual logic of technical field manuals, architectural drawings, industrial product documentation, and editorial engineering publications. These are broad references, not templates to copy.
 
 ### 4. Color
-Provide preferred base colors, accent colors, and colors to avoid. Include any existing logo or brand constraints.
 
-**Your direction:** _Not supplied yet._
+**Approved conceptual palette:**
+
+- Archive Paper: `#EAE6DC`
+- Carbon Ink: `#202522`
+- Machine Grey: `#85877E`
+- Oxide Signal: `#B85C3B`
+
+The palette must pass contrast checks before implementation. Paper-led light surfaces are the marketing-site default; a dark workspace theme is not assumed.
 
 ### 5. Typography
-Provide preferred typefaces or typographic character (for example: neutral, editorial, technical, compact). Final choices must be checked for readability and licensing.
 
-**Your direction:** _Not supplied yet._
+**Approved direction:** Editorial grotesk or humanist sans for display and reading, paired with a legible technical monospace for metadata and code references. No exact font family is locked; licensing, language coverage, readability, and performance must be checked.
 
 ### 6. Layout and density
-Describe whether the experience should feel dense and technical, spacious and editorial, dashboard-oriented, documentation-oriented, or another direction.
 
-**Your direction:** _Not supplied yet._
+**Approved:** Asymmetric editorial composition, content-led section structure, deliberate whitespace, and varied rhythm. Technical annotations and diagrams should explain real system relationships. Avoid generic SaaS templates.
 
 ### 7. Motion and interaction
-Describe the intended motion character and any motion that should be avoided. Reduced-motion support remains required.
 
-**Your direction:** _Not supplied yet._
+**Approved:** Calm motion, limited to useful feedback and state changes. Respect reduced-motion preferences. No parallax or scroll-jacking.
 
 ### 8. Accessibility and responsive constraints
-List contrast, keyboard, screen-reader, mobile, localization, and browser requirements known at this stage.
 
-**Your direction:** _Not supplied yet._
+**Approved implementation target:** WCAG 2.2 AA, keyboard operation, visible focus, semantic structure, 200% zoom support, no horizontal overflow, and touch targets of at least 44px. Test contrast rather than relying on visual judgment.
 
 ### 9. Required pages and content
-List the pages needed for the first public website and the content that is already factual and approved.
 
-**Your direction:** _Not supplied yet._
+**Initial content priorities:** Explain the product, modernization workflow, initial technical scope, architecture approach, and current development status. Final page map and calls to action remain subject to product and implementation readiness. Do not fabricate proof points, customer logos, testimonials, screenshots, or metrics.
 
-## Completion rule
+## Signature identity
 
-The product owner supplies the direction. An agent may organize those answers into this document but must not invent the brand's visual identity. Do not begin production UI design until this brief has been answered and promoted into the authoritative root `DESIGN.md`.
+**Migration Trace** is the recurring motif: a connected, annotated path through:
+
+`LEGACY SOURCE / INSPECTION / TRANSFORMATION / VALIDATION / TARGET`
+
+The motif must explain real sequence, relationships, or state. It is not decorative network art. Any illustrative data must be clearly labeled.
+
+## Design dials
+
+- ENERGY: 2 / Balanced
+- RHYTHM: 3 / Bold
+- MOTION: 1 / Calm
+
+## Source of truth
+
+The authoritative design direction is [`DESIGN.md`](../DESIGN.md). This brief records the approved decision. Production UI must follow `DESIGN.md` and pass the Anti Slop Delivery Gate.
