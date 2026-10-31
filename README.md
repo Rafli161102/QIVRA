@@ -52,7 +52,7 @@ The first public website workspace lives in [apps/website](apps/website/README.m
 Run locally with Node.js 20.9 or newer:
 
 ```bash
-npm install
+npm ci
 npm run dev
 ```
 

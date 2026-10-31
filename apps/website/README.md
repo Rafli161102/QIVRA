@@ -12,7 +12,7 @@ Public website foundation for QIVRA, implemented with Next.js App Router and Typ
 Run from the repository root:
 
 ```bash
-npm install
+npm ci
 npm run dev
 npm run typecheck
 npm run build

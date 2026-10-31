@@ -7,6 +7,7 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 ## [Unreleased]
 
 ### Added
+- Added the root npm workspace lockfile and deterministic dependency installation with `npm ci`.
 - Established the QIVRA product overview and initial Java modernization vertical slice.
 - Documented product boundaries, target architecture, security model, licensing review process, and milestone roadmap.
 - Added contribution guidance, repository hygiene files, and pull request template.
