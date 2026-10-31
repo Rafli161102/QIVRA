@@ -8,6 +8,7 @@
     "build": "npm run build --workspace @qivra/website",
     "start": "npm run start --workspace @qivra/website",
     "typecheck": "npm run typecheck --workspace @qivra/website",
+    "test:e2e": "npm run test:e2e --workspace @qivra/website",
     "check": "npm run typecheck && npm run build"
   }
 }
