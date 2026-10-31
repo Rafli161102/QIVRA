@@ -48,14 +48,14 @@ Status: **Not integrated — per-artifact legal and technical review required.**
 |---|---|---|---|---|
 | OpenRewrite core | Not selected | Java analysis / transformation adapter | Verify exact artifact | Not integrated |
 | OpenRewrite recipe modules | Not selected | Migration recipes | Verify each artifact independently | Not integrated |
-| Next.js | 16.4.3 | Website runtime | MIT | Integrated; transitive graph pending lockfile |
-| React / React DOM | 19.3.1 | Website runtime | MIT | Integrated; transitive graph pending lockfile |
-| `@playwright/test` | 1.64.1 | Development-only browser checks | Apache-2.0 | Integrated; notice retained |
-| TypeScript | 5.9.3 | Website type checking | Apache-2.0 | Integrated in website workspace |
-| `@types/node`, `@types/react`, `@types/react-dom` | Pinned in package manifest | Development typings | MIT | Integrated in website workspace |
+| Next.js | 16.4.3 | Website runtime | MIT | Integrated; direct and transitive versions recorded in package-lock.json; license review pending |
+| React / React DOM | 19.3.1 | Website runtime | MIT | Integrated; direct and transitive versions recorded in package-lock.json; license review pending |
+| `@playwright/test` | 1.64.1 | Development-only browser checks | Apache-2.0 | Integrated; notice retained; lockfile committed |
+| TypeScript | 5.9.3 | Website type checking | Apache-2.0 | Integrated in website workspace; lockfile committed |
+| `@types/node`, `@types/react`, `@types/react-dom` | Pinned in package manifest | Development typings | MIT | Integrated in website workspace; lockfile committed |
 | Container runtime | Deployment-dependent | Worker isolation | Review distribution and hosting terms | Not integrated |
 
-Update this table whenever a dependency is proposed, added, upgraded, or removed. The direct versions above are recorded, but the full transitive dependency graph has not been locked because a root npm lockfile is not yet committed. Generate and review a lockfile and software bill of materials (SBOM) before the first production release.
+The root `package-lock.json` records the resolved direct and transitive npm dependency graph for reproducible installation. This does not replace the required package-by-package license review, security review, or generated SBOM. Update this table whenever a dependency is proposed, added, upgraded, or removed. Complete the transitive license review and generate an SBOM before the first production release.
 
 ## Release gate
 

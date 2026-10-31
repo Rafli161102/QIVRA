@@ -10,17 +10,20 @@ The repository contains the first public website foundation at `apps/website/`.
 - Semantic navigation, skip link, focus styles, and reduced-motion handling.
 - Migration Trace workflow explanation.
 - Honest pre-alpha status and Java modernization target scope.
+- Production metadata, Open Graph and Twitter card metadata, and origin-based canonical URLs.
+- Production-only sitemap and crawler access. Preview, local, and CI builds are configured as non-indexable.
+- Baseline security response headers.
 
 The website is a product overview. It is not the QIVRA analyzer, dashboard, transformation engine, or a working migration service.
 
 ## Local development
 
-Requirements: Node.js 20.9 or newer and npm.
+Requirements: Node.js 20.9 or newer and npm 10.9.9.
 
 From the repository root:
 
 ```bash
-npm install
+npm ci
 npm run dev
 ```
 
@@ -34,10 +37,40 @@ npx playwright install chromium
 npm run test:e2e
 ```
 
+## SEO and crawler behavior
+
+The metadata in `app/layout.tsx` defines the site title, description, Open Graph website metadata, and Twitter summary card. A canonical URL and `metadataBase` are added only for a configured production deployment.
+
+Set `NEXT_PUBLIC_SITE_URL` to the real HTTPS origin in the Vercel Production environment. The value must be an origin only, with no path, query, or fragment. Do not set the production origin as a Preview variable.
+
+The `app/robots.ts` and `app/sitemap.ts` handlers use Vercel's `VERCEL_ENV` and the configured canonical origin:
+- Production with a valid origin: crawling is allowed and the sitemap lists the homepage.
+- Preview, local, CI, or missing origin: crawling is disallowed and no public sitemap entries are emitted.
+
+The website does not yet include an Open Graph image, favicon, or logo. Bespoke visual assets require separate product-owner approval.
+
+## Security response headers
+
+The website sets the following baseline headers through `next.config.ts`:
+
+- `X-Content-Type-Options: nosniff`
+- `X-Frame-Options: DENY`
+- `Referrer-Policy: strict-origin-when-cross-origin`
+- `Permissions-Policy: camera=(), microphone=(), geolocation=()`
+
+This is a baseline for the static public marketing surface, not a complete security certification. A Content Security Policy and HSTS policy should be designed when third-party scripts, forms, analytics, or custom-domain production hosting are introduced.
+
+## Vercel deployment
+
+See [DEPLOYMENT.md](DEPLOYMENT.md) for repository import, monorepo root settings, preview/production branch behavior, canonical origin configuration, and the pre-promotion checklist.
+
+The GitHub repository is not yet connected to Vercel. No live preview URL is available.
+
 ## Implementation notes
 
 - The root package uses npm workspaces and delegates commands to `apps/website`.
-- Direct framework dependencies are pinned in the website package manifest.
+- The root `package.json` declares `npm@10.9.9` as the package manager.
+- Direct package versions and the resolved transitive dependency graph are pinned in the root `package-lock.json`.
 - No external font, icon, animation, or component package is required by the production website. Playwright is a development-only test dependency.
 - No logo, custom illustration, customer imagery, or fabricated product screenshot is included.
 - The CSS uses the derived muted text shade `#555A52` for readable secondary copy. Machine Grey is reserved for non-text annotation.
@@ -58,8 +91,10 @@ The following pairings were calculated using the WCAG relative-luminance contras
 
 Machine Grey is not used for small text because it does not reach normal-text contrast on Archive Paper. Its role is limited to non-text annotation. Focus indicators and meaningful UI boundaries still require validation against their actual adjacent surfaces.
 
-## Validation limits
+## Validation
 
-The website-check GitHub Actions workflow installs dependencies, runs TypeScript checks, creates a production build, starts that build, and executes the Chromium end-to-end suite.
+The website-check GitHub Actions workflow installs dependencies with `npm ci`, runs TypeScript checks, creates a production build, starts that build, and executes the Chromium end-to-end suite.
 
-The dependency manifests pin direct package versions. The npm lockfile must still be generated and committed from a network-enabled checkout before treating the complete dependency graph as reproducible. CI currently installs using npm without a committed lockfile.
+The browser suite checks the rendered page, anchor navigation, CTA links, keyboard skip-link focus, link target sizes, text/action contrast, responsive overflow from 320px to 1440px, reduced motion, SEO metadata, preview crawler rules, and baseline response headers.
+
+The root lockfile pins the resolved transitive dependency graph. A package-by-package transitive license review and SBOM remain release requirements.

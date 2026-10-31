@@ -6,12 +6,14 @@ on:
     paths:
       - "apps/website/**"
       - "package.json"
+      - "package-lock.json"
       - ".github/workflows/website-check.yml"
   pull_request:
     branches: [main, develop]
     paths:
       - "apps/website/**"
       - "package.json"
+      - "package-lock.json"
       - ".github/workflows/website-check.yml"
   workflow_dispatch:
 
@@ -30,6 +32,8 @@ jobs:
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
+        with:
+          persist-credentials: false
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
@@ -37,7 +41,7 @@ jobs:
           node-version: "22"
 
       - name: Install dependencies
-        run: npm install --no-audit --no-fund
+        run: npm ci --no-audit --no-fund
 
       - name: Check TypeScript
         run: npm run typecheck

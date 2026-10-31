@@ -7,6 +7,7 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 ## [Unreleased]
 
 ### Added
+- Added the root npm workspace lockfile and deterministic dependency installation with `npm ci`.
 - Established the QIVRA product overview and initial Java modernization vertical slice.
 - Documented product boundaries, target architecture, security model, licensing review process, and milestone roadmap.
 - Added contribution guidance, repository hygiene files, and pull request template.
@@ -17,11 +18,14 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 - Added the first Next.js website workspace with an Engineering Atlas product overview, responsive layout, semantic Migration Trace sequence, and website verification workflow.
 - Added website setup and implementation notes in `docs/WEBSITE.md`.
 - Added Playwright Chromium end-to-end checks for navigation, link destinations, keyboard skip-link behavior, touch-target sizing, key contrast pairs, reduced motion, and responsive overflow.
+- Added production SEO metadata, Open Graph and Twitter summary metadata, canonical-origin handling, production sitemap, preview crawler restrictions, and baseline response security headers.
+- Added a Vercel deployment guide with monorepo root settings, environment variables, preview review, and production promotion requirements.
 
 ### Changed
 - Promoted the website design brief from an unanswered questionnaire to a record of the approved Engineering Atlas direction.
 - Updated the README and Anti Slop operating notes to point to the authoritative `DESIGN.md`.
 - Updated the README with the website workspace and current implementation status.
+- Declared the npm workspace package manager version in the root package manifest.
 
 ### Notes
 - The public website foundation is separate from the QIVRA analyzer and modernization engine. No migration service is available yet.
@@ -29,8 +33,9 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 - No logo, custom illustration, customer imagery, testimonials, benchmark figures, or performance claims were added.
 - The website build must pass the website-check workflow before it is considered build-verified.
 - Playwright is a development-only dependency and its Apache-2.0 license notice is retained.
-- The npm lockfile remains to be generated from a network-enabled checkout, so the full transitive dependency graph is not yet pinned.
+- Added the npm workspace lockfile. CI now installs from the committed lockfile using `npm ci`; direct and transitive license review and SBOM generation remain production release requirements.
 - No transformation engine or third-party transformation runtime dependency has been integrated yet.
+- Vercel preview deployment remains pending project connection; no deployment URL or production domain is claimed.
 
 ## Release policy
 
