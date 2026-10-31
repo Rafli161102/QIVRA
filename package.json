@@ -1,8 +1,13 @@
 {
   "name": "qivra",
   "private": true,
-  "workspaces": ["apps/website"],
-  "engines": { "node": ">=20.9.0" },
+  "packageManager": "npm@10.9.9",
+  "workspaces": [
+    "apps/website"
+  ],
+  "engines": {
+    "node": ">=20.9.0"
+  },
   "scripts": {
     "dev": "npm run dev --workspace @qivra/website",
     "build": "npm run build --workspace @qivra/website",

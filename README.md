@@ -56,7 +56,9 @@ npm install
 npm run dev
 ```
 
-Run type checks and the production build with `npm run typecheck` and `npm run build`. For browser verification, build first, install Chromium using `npx playwright install chromium`, then run `npm run test:e2e`. See [docs/WEBSITE.md](docs/WEBSITE.md) for setup and implementation details.
+Run type checks and the production build with `npm run typecheck` and `npm run build`. For browser verification, build first, install Chromium using `npx playwright install chromium`, then run `npm run test:e2e`.
+
+The website includes production SEO metadata, a production-only sitemap, non-indexable preview robots behavior, and baseline response security headers. See [docs/WEBSITE.md](docs/WEBSITE.md) and [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md) for implementation and Vercel setup.
 
 ## Planned architecture
 

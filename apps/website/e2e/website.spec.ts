@@ -204,6 +204,71 @@ for (const width of [320, 360, 390, 700, 768, 980, 1024, 1440]) {
   });
 }
 
+
+test("SEO metadata is complete and preview deployments are not indexable", async ({ page }) => {
+  await page.goto("/");
+
+  await expect(page.locator('meta[name="description"]')).toHaveAttribute(
+    "content",
+    /inspect legacy software.*Java, Maven, and Gradle/i,
+  );
+  await expect(page.locator('meta[property="og:type"]')).toHaveAttribute("content", "website");
+  await expect(page.locator('meta[property="og:site_name"]')).toHaveAttribute("content", "QIVRA");
+  await expect(page.locator('meta[name="twitter:card"]')).toHaveAttribute("content", "summary");
+
+  const configuredSiteUrl = process.env.NEXT_PUBLIC_SITE_URL;
+  const isConfiguredProduction = Boolean(
+    process.env.VERCEL_ENV === "production" && configuredSiteUrl,
+  );
+  const robots = await page.locator('meta[name="robots"]').getAttribute("content");
+
+  if (isConfiguredProduction && configuredSiteUrl) {
+    expect(robots).toMatch(/index/);
+    await expect(page.locator('link[rel="canonical"]')).toHaveAttribute(
+      "href",
+      new URL("/", configuredSiteUrl).toString(),
+    );
+  } else {
+    expect(robots).toContain("noindex");
+    await expect(page.locator('link[rel="canonical"]')).toHaveCount(0);
+  }
+});
+
+test("robots and sitemap never expose a preview URL to crawlers", async ({ page }) => {
+  const robotsResponse = await page.request.get("/robots.txt");
+  const sitemapResponse = await page.request.get("/sitemap.xml");
+
+  expect(robotsResponse.status()).toBe(200);
+  expect(sitemapResponse.status()).toBe(200);
+
+  const robotsText = await robotsResponse.text();
+  const sitemapText = await sitemapResponse.text();
+  const configuredSiteUrl = process.env.NEXT_PUBLIC_SITE_URL;
+  const isConfiguredProduction = Boolean(
+    process.env.VERCEL_ENV === "production" && configuredSiteUrl,
+  );
+
+  if (isConfiguredProduction && configuredSiteUrl) {
+    expect(robotsText).toContain("Allow: /");
+    expect(robotsText).toContain(new URL("/sitemap.xml", configuredSiteUrl).toString());
+    expect(sitemapText).toContain(new URL("/", configuredSiteUrl).toString());
+  } else {
+    expect(robotsText).toContain("Disallow: /");
+    expect(sitemapText).not.toContain("<loc>http");
+  }
+});
+
+test("baseline security response headers are present", async ({ page }) => {
+  const response = await page.goto("/");
+  expect(response).not.toBeNull();
+
+  const headers = response!.headers();
+  expect(headers["x-content-type-options"]).toBe("nosniff");
+  expect(headers["x-frame-options"]).toBe("DENY");
+  expect(headers["referrer-policy"]).toBe("strict-origin-when-cross-origin");
+  expect(headers["permissions-policy"]).toBe("camera=(), microphone=(), geolocation=()");
+});
+
 test("reduced-motion preference disables smooth scrolling", async ({ page }) => {
   await page.emulateMedia({ reducedMotion: "reduce" });
   await page.goto("/");
