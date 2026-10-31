@@ -87,6 +87,10 @@ See [CHANGELOG.md](CHANGELOG.md) for recorded changes and [docs/ROADMAP.md](docs
 | P0.7 | Dashboard and project workflows | Planned |
 | P0.8 | Git provider integration | Planned |
 
+## AI-assisted development quality
+
+QIVRA vendors the [Anti Slop agent skills](https://github.com/miqdadbadjuber/anti-slop) for UI, accessibility, responsive layout, copywriting, and code-comment hygiene. The project snapshot and update procedure are documented in [docs/ANTISLOP.md](docs/ANTISLOP.md). Read [AGENTS.md](AGENTS.md) before AI-assisted development. The website design direction is intentionally not pre-filled; it must be authored with the product owner before production UI work begins.
+
 ## Getting started
 
 There is no runnable application yet. The analyzer implementation and runtime setup will be documented in P0.2.

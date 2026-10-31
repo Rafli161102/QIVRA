@@ -32,6 +32,16 @@ Do not infer the license of a Maven artifact from the license of a similarly nam
 
 Status: **Not integrated — per-artifact legal and technical review required.**
 
+## Vendored agent guidance: Anti Slop
+
+- Upstream: https://github.com/miqdadbadjuber/anti-slop
+- Snapshot: v3.2.24; upstream Git tree `3005235d030b4793146ad9afe8d01045efd90e1d` (retrieved 2026-10-31).
+- Scope: project-local agent instructions under `.agents/skills/`. This is development tooling/documentation, not a website runtime dependency.
+- License: MIT. Preserve the upstream notice at `LICENSES/ANTI-SLOP-MIT.txt`.
+- The `antislop-ui` and `antislop-human` skill bundles include material from web-quality-skills; its separate MIT notice is preserved at `LICENSES/WEB-QUALITY-SKILLS-MIT.txt` and in the respective skill directories.
+- QIVRA's Apache-2.0 license does not replace these upstream MIT terms. The vendored files remain subject to their applicable upstream notices.
+- Update the snapshot using the documented upstream installer/update procedure in [ANTISLOP.md](ANTISLOP.md), then review the diff and license changes before merging.
+
 ## Dependency register
 
 | Component | Candidate version | Intended use | License | Status |
