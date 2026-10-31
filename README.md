@@ -5,7 +5,7 @@
 
 QIVRA is an engineering platform for understanding, planning, and executing software modernization. It helps teams inspect legacy codebases, identify technical risk, apply controlled transformations, and verify results with reproducible validation.
 
-> **Project status:** Pre-alpha. P0.1 foundation and product design direction are documented; no production migration engine or runnable application has been released.
+> **Project status:** Pre-alpha. The product foundation, design direction, and first public website are documented and under development. The analyzer and modernization engine have not been released.
 
 ## Product capabilities (target)
 
@@ -41,15 +41,28 @@ Java 8/11 to Java 17 is an initial use case, not a permanent product limitation.
 
 QIVRA's approved visual direction is **Engineering Atlas**: an industrial-editorial engineering publication language built around precise typography, paper-led surfaces, annotated technical diagrams, and varied editorial composition.
 
-Its signature motif, **Migration Trace**, explains the path from legacy source through inspection, transformation, and validation. The direction uses a restrained palette and calm motion. It does not rely on generic SaaS templates or fabricated product evidence.
+Its signature motif, **Migration Trace**, explains the planned path from legacy source through inspection, transformation, and validation. The direction uses a restrained palette and calm motion. It does not rely on generic SaaS templates or fabricated product evidence.
 
-Read [DESIGN.md](DESIGN.md) for the authoritative visual direction and [docs/WEBSITE-DESIGN-BRIEF.md](docs/WEBSITE-DESIGN-BRIEF.md) for the recorded product-owner decision. The direction is approved, but no website, logo, design asset, or UI component has been implemented.
+Read [DESIGN.md](DESIGN.md) for the authoritative visual direction and [docs/WEBSITE-DESIGN-BRIEF.md](docs/WEBSITE-DESIGN-BRIEF.md) for the recorded product-owner decision. The design direction is approved, but logo and custom visual assets remain separate work.
+
+## Website
+
+The first public website workspace lives in [apps/website](apps/website/README.md). It uses Next.js App Router and TypeScript, follows Engineering Atlas, and presents QIVRA's current pre-alpha status without implying that the analyzer or migration engine is available.
+
+Run locally with Node.js 20.9 or newer:
+
+```bash
+npm install
+npm run dev
+```
+
+See [docs/WEBSITE.md](docs/WEBSITE.md) for setup and implementation details.
 
 ## Planned architecture
 
 | Layer | Responsibility | Initial direction |
 |---|---|---|
-| Dashboard | Projects, assessments, plans, diffs, reports | Next.js + TypeScript |
+| Website / Dashboard | Product overview, projects, assessments, plans, diffs, reports | Next.js + TypeScript |
 | API / Orchestrator | Jobs, policies, workspace lifecycle, results | TypeScript |
 | Modernization engine | Project analysis and transformations | Java 21 |
 | Transformation adapters | Recipe and engine integration | OpenRewrite adapter, subject to license review |
@@ -57,25 +70,23 @@ Read [DESIGN.md](DESIGN.md) for the authoritative visual direction and [docs/WEB
 | Persistence | Users, projects, jobs, audit records | PostgreSQL |
 | Queue / coordination | Asynchronous job dispatch | Redis-compatible queue |
 
-This is a target architecture, not a claim that these components have been implemented.
+The website is the first implemented application workspace. The remaining components are a target architecture, not a claim that they have been implemented.
 
 ## Repository layout
 
-The repository will evolve toward a monorepo. Directories will be added with working code instead of empty placeholders.
-
 ```text
 apps/
-  api/
-  dashboard/
+  website/
+  api/                 planned
+  dashboard/           planned
 engine/
-  analyzer/
-  migration/
-  recipes/
-  validation/
+  analyzer/             planned
+  migration/            planned
+  recipes/              planned
+  validation/           planned
 packages/
-  contracts/
-  sdk/
-examples/
+  contracts/            planned
+  sdk/                  planned
 docs/
 infrastructure/
 ```
@@ -98,10 +109,6 @@ See [CHANGELOG.md](CHANGELOG.md) for recorded changes and [docs/ROADMAP.md](docs
 ## AI-assisted development quality
 
 QIVRA vendors the [Anti Slop agent skills](https://github.com/miqdadbadjuber/anti-slop) for UI, accessibility, responsive layout, copywriting, and code-comment hygiene. The project snapshot and update procedure are documented in [docs/ANTISLOP.md](docs/ANTISLOP.md). Read [AGENTS.md](AGENTS.md) before AI-assisted development. All UI work must follow the product-owner-approved [design direction](DESIGN.md) and pass the Anti Slop Delivery Gate.
-
-## Getting started
-
-There is no runnable application yet. The analyzer implementation and runtime setup will be documented in P0.2.
 
 ## Security
 
