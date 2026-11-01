@@ -27,8 +27,8 @@ Do not infer the license of a Maven artifact from the license of a similarly nam
 
 - Upstream: https://github.com/javaparser/javaparser
 - Release: javaparser-parent-3.28.2
-- Artifact: com.github.javaparser:javaparser-core:3.28.2
-- Purpose: Java AST inventory and source line evidence.
+- Artifacts: com.github.javaparser:javaparser-core:3.28.2 and com.github.javaparser:javaparser-symbol-solver-core:3.28.2
+- Purpose: Java AST inventory, source line evidence, and best-effort workspace/JDK method identity resolution.
 - The upstream project offers Apache-2.0 and LGPL-3.0 licensing options. QIVRA explicitly selects its Apache-2.0 option; preserve LICENSES/JAVAPARSER-APACHE-2.0.txt.
 - No JavaParser source files are copied into QIVRA.
 
@@ -67,7 +67,7 @@ The selected parser modules are pinned in engine/analyzer-java/pom.xml. Their tr
 
 | Component | Candidate version | Intended use | License | Status |
 |---|---|---|---|---|
-| JavaParser core | 3.28.2 | Java AST inventory | Apache-2.0 option selected (upstream also offers LGPL-3.0) | Integrated in local hybrid analyzer |
+| JavaParser core + Symbol Solver | 3.28.2 | Java AST, source evidence, and workspace/JDK method identity | Apache-2.0 option selected (upstream also offers LGPL-3.0) | Integrated in local hybrid analyzer |
 | OpenRewrite Gradle parser | 8.90.4 | Gradle Groovy/Kotlin syntax parsing | Apache-2.0 | Integrated in local hybrid analyzer |
 | OpenRewrite XML parser | 8.90.4 | Maven POM XML syntax parsing | Apache-2.0 | Integrated in local hybrid analyzer |
 | OpenRewrite recipes / plugins | Not selected | Future transformations | Review each artifact independently | Not integrated |

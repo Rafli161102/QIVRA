@@ -36,7 +36,7 @@ Deliverables:
 - [ ] Add remote Maven parent/BOM resolution and effective-model parity only in a separately approved, network-controlled phase.
 - [x] Add first-pass JavaParser AST signals for packages, imports, type/method declarations, method-call names, language features, and source lines.
 - [x] Add OpenRewrite syntax parsing for Gradle Groovy/Kotlin scripts and Maven POM XML, without build execution.
-- [ ] Add resolved Java API identity and richer source-level compatibility signals with file and line evidence.
+- [x] Add best-effort Java API identity for method calls/references against workspace source and JDK symbols, with qualified signatures and file/line evidence; unresolved external dependencies remain explicit.
 - [x] Add Java fixtures for legacy classes, records, switch expressions, and malformed Java syntax; run the combined parser in CI.
 - [x] Expand fixtures for Gradle version catalogs, Maven parent inheritance, inherited dependency versions, BOM imports, and unactivated profiles.
 - [x] Add a deterministic provenance-labelled graph for Java imports/declarations and Maven parent, dependency, and aggregator-module relationships, with explicit unresolved/ambiguous states and regression checks.

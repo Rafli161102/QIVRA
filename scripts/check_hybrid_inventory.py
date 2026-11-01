@@ -7,7 +7,7 @@ def main():
     data = json.loads(Path(sys.argv[1]).read_text(encoding="utf-8"))
     summary = data["summary"]
 
-    assert data["schema_version"] == "1.3.0", "unexpected hybrid inventory schema"
+    assert data["schema_version"] == "1.4.0", "unexpected hybrid inventory schema"
     assert summary["java_files"] >= 3, "Java fixture files were not discovered"
     assert summary["parsed_java_files"] >= 2, "Java fixtures did not parse"
     assert summary["java_type_declarations"] >= 3, "Java type declarations were not extracted"
@@ -39,6 +39,16 @@ def main():
     assert model["dependencies"][0]["version_source"] == "workspace_dependency_management", \
         "Maven inherited dependency version provenance missing"
     assert model["profiles"][0]["activated"] is False, "Maven profile must not be activated during static analysis"
+
+    assert summary["java_api_references"] >= 1, "Java API references were not extracted"
+    assert summary["java_api_resolved_references"] >= 1, "Java API references were not resolved"
+    assert summary["java_api_workspace_source_roots"] >= 1, "Java workspace source roots were not configured"
+    api_records = [item for source in data["java_sources"] for item in source.get("api_references", [])]
+    assert api_records, "Java API evidence records missing"
+    assert any(item["resolution"] == "resolved" and item.get("qualified_signature") for item in api_records), \
+        "resolved Java API identity missing"
+    assert all(item["evidence"]["file"] and item["evidence"]["line"] > 0 for item in api_records), \
+        "Java API references must retain file and line evidence"
 
     graph = data["dependency_graph"]
     graph_summary = graph["summary"]

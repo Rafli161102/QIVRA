@@ -43,8 +43,8 @@ import static com.github.javaparser.ParseStart.COMPILATION_UNIT;
 import static com.github.javaparser.Providers.provider;
 
 public final class HybridAnalyzer {
-    private static final String VERSION = "0.4.0";
-    private static final String SCHEMA_VERSION = "1.3.0";
+    private static final String VERSION = "0.5.0";
+    private static final String SCHEMA_VERSION = "1.4.0";
     private static final int MAX_FILES = 20_000;
     private static final long MAX_FILE_BYTES = 2_000_000L;
     private static final Set<String> IGNORED_DIRECTORIES = Set.of(
@@ -169,6 +169,7 @@ public final class HybridAnalyzer {
                 .map(item -> item.get("static_model")).filter(Map.class::isInstance).map(Map.class::cast)
                 .map(item -> item.get("bom_imports")).filter(List.class::isInstance).map(List.class::cast).mapToLong(List::size).sum();
 
+        Map<String, Object> javaApiSummary = JavaApiIntelligence.enrich(root, javaSources, diagnostics, MAX_FILE_BYTES);
         Map<String, Object> dependencyGraph = DependencyGraph.build(javaSources, buildFiles);
         Map<String, Object> dependencyGraphSummary = (Map<String, Object>) dependencyGraph.get("summary");
 
@@ -188,6 +189,12 @@ public final class HybridAnalyzer {
         summary.put("maven_bom_imports", mavenBomImportCount);
         summary.put("java_type_declarations", typeCount);
         summary.put("java_method_declarations", methodCount);
+        summary.put("java_api_references", javaApiSummary.get("resolved_references") instanceof Number
+                ? ((Number) javaApiSummary.get("resolved_references")).longValue()
+                        + ((Number) javaApiSummary.get("unresolved_references")).longValue() : 0L);
+        summary.put("java_api_resolved_references", javaApiSummary.get("resolved_references"));
+        summary.put("java_api_unresolved_references", javaApiSummary.get("unresolved_references"));
+        summary.put("java_api_workspace_source_roots", javaApiSummary.get("workspace_source_roots"));
         summary.put("dependency_graph_nodes", dependencyGraphSummary.get("node_count"));
         summary.put("dependency_graph_edges", dependencyGraphSummary.get("edge_count"));
         summary.put("dependency_graph_unresolved_edges", dependencyGraphSummary.get("unresolved_edges"));
@@ -199,6 +206,7 @@ public final class HybridAnalyzer {
         analyzer.put("name", "qivra-hybrid-source-analyzer");
         analyzer.put("version", VERSION);
         analyzer.put("java_parser", "com.github.javaparser:javaparser-core:3.28.2");
+        analyzer.put("java_symbol_solver", "com.github.javaparser:javaparser-symbol-solver-core:3.28.2");
         analyzer.put("openrewrite", "org.openrewrite:rewrite-gradle,rewrite-xml:8.90.4");
         analyzer.put("toml_parser", "org.tomlj:tomlj:1.1.1");
 
