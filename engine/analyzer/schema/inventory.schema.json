@@ -4,17 +4,22 @@
   "type": "object",
   "required": ["schema_version", "analyzer", "snapshot", "summary", "projects", "diagnostics"],
   "properties": {
-    "schema_version": { "const": "1.0.0" },
+    "schema_version": { "const": "1.1.0" },
     "analyzer": {
       "type": "object",
       "required": ["name", "version"],
-      "properties": { "name": { "type": "string" }, "version": { "type": "string" } },
+      "properties": {
+        "name": { "type": "string" },
+        "version": { "type": "string" }
+      },
       "additionalProperties": false
     },
     "snapshot": {
       "type": "object",
       "required": ["build_files_sha256"],
-      "properties": { "build_files_sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" } },
+      "properties": {
+        "build_files_sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" }
+      },
       "additionalProperties": false
     },
     "summary": {
@@ -28,7 +33,33 @@
       },
       "additionalProperties": false
     },
-    "projects": { "type": "array", "items": { "type": "object" } },
+    "projects": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["path", "build_system", "name", "java", "modules", "dependencies", "plugins", "evidence"],
+        "properties": {
+          "path": { "type": "string" },
+          "build_system": { "enum": ["maven", "gradle"] },
+          "name": { "type": "string" },
+          "group": { "type": ["string", "null"] },
+          "version": { "type": ["string", "null"] },
+          "java": { "type": "object" },
+          "modules": { "type": "array", "items": { "type": "string" } },
+          "dependencies": { "type": "array", "items": { "type": "object" } },
+          "dependency_management": { "type": "array", "items": { "type": "object" } },
+          "bom_imports": { "type": "array", "items": { "type": "object" } },
+          "plugins": { "type": "array", "items": { "type": "object" } },
+          "plugin_management": { "type": "array", "items": { "type": "object" } },
+          "properties": { "type": "object" },
+          "parent": { "type": ["object", "null"] },
+          "parent_inheritance": { "type": "object" },
+          "profiles": { "type": "array", "items": { "type": "object" } },
+          "evidence": { "type": "array", "items": { "type": "object" } }
+        },
+        "additionalProperties": true
+      }
+    },
     "diagnostics": { "type": "array", "items": { "type": "object" } }
   },
   "additionalProperties": false

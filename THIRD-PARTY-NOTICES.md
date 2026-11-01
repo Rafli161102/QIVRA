@@ -53,9 +53,21 @@ Consult the package manifests for exact direct versions. The transitive dependen
 - Selected artifacts:
   - org.openrewrite:rewrite-gradle:8.90.4
   - org.openrewrite:rewrite-xml:8.90.4
+  - org.openrewrite:rewrite-toml:8.90.4
 - Purpose: static Gradle Groovy/Kotlin syntax parsing and XML parsing for Maven POMs.
 - License: Apache-2.0 for the selected modules; full license at LICENSES/OPENREWRITE-APACHE-2.0.txt.
 - No OpenRewrite recipes, plugins, Maven model resolver, or additional recipe packs are bundled in this milestone.
 - No OpenRewrite source files are copied into QIVRA.
 
 The selected parser artifacts are pinned in engine/analyzer-java/pom.xml. Their transitive dependencies still require package-level license and security review before a production release. The source-analysis module is pre-alpha tooling, not a released customer migration service.
+
+
+## Superpowers selected agent workflow skills
+
+- Project: https://github.com/obra/superpowers
+- Snapshot commit: 2ce8aa15d05bd57213e6f746f953aafb7ded7a8b
+- Selected upstream paths: skills/systematic-debugging/SKILL.md, skills/test-driven-development/SKILL.md, skills/verification-before-completion/SKILL.md
+- License: MIT
+- Full notice: LICENSES/SUPERPOWERS-MIT.txt
+- Installed files: .agents/skills/systematic-debugging/, .agents/skills/test-driven-development/, and .agents/skills/verification-before-completion/.
+- QIVRA vendors only the three selected skill files, not the complete Superpowers framework or any runtime components.

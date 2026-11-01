@@ -9,6 +9,7 @@ The hybrid analyzer combines QIVRA's Python build-metadata inventory with a Java
 | JavaParser | com.github.javaparser:javaparser-core:3.28.2 | Java AST, package/import/type/method declarations, and source line evidence | Apache-2.0 option; upstream also offers LGPL-3.0 |
 | OpenRewrite Gradle parser | org.openrewrite:rewrite-gradle:8.90.4 | Static Gradle Groovy and Kotlin syntax parsing | Apache-2.0 |
 | OpenRewrite XML parser | org.openrewrite:rewrite-xml:8.90.4 | Static XML parsing for Maven POM files | Apache-2.0 |
+| OpenRewrite TOML parser | org.openrewrite:rewrite-toml:8.90.4 | Gradle version catalog syntax | Apache-2.0 |
 
 The integration uses pinned Maven artifacts and does not copy upstream parser source files into this repository. See docs/OSS_INTEGRATION.md and docs/LICENSING.md for provenance, scope, and notices.
 
@@ -38,7 +39,7 @@ mvn -q -f engine/analyzer-java/pom.xml org.codehaus.mojo:exec-maven-plugin:3.5.0
 - Java package and import declarations, type declarations, methods, method-call name counts, and source line locations.
 - Initial language feature signals for records, text blocks, lambdas, switch expressions, and module declarations.
 - Groovy/Kotlin Gradle build and settings syntax parsing through OpenRewrite.
-- Maven POM XML syntax parsing through OpenRewrite XML.
+- Maven POM XML and Gradle version catalog TOML syntax parsing through OpenRewrite XML/TOML parsers.
 - Deterministic source snapshot digest, file-count and file-size limits, and evidence-backed parse diagnostics.
 
 ## Safety boundary

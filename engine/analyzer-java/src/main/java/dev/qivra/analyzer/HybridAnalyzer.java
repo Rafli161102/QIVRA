@@ -21,6 +21,9 @@ import org.openrewrite.Parser;
 import org.openrewrite.SourceFile;
 import org.openrewrite.gradle.GradleParser;
 import org.openrewrite.tree.ParseError;
+import org.openrewrite.toml.TomlParser;
+import org.openrewrite.toml.tree.Toml;
+import org.openrewrite.toml.tree.TomlValue;
 import org.openrewrite.xml.XmlParser;
 
 import java.io.IOException;
@@ -43,8 +46,8 @@ import static com.github.javaparser.ParseStart.COMPILATION_UNIT;
 import static com.github.javaparser.Providers.provider;
 
 public final class HybridAnalyzer {
-    private static final String VERSION = "0.2.0";
-    private static final String SCHEMA_VERSION = "1.1.0";
+    private static final String VERSION = "0.3.0";
+    private static final String SCHEMA_VERSION = "1.2.0";
     private static final int MAX_FILES = 20_000;
     private static final long MAX_FILE_BYTES = 2_000_000L;
     private static final Set<String> IGNORED_DIRECTORIES = Set.of(
@@ -104,6 +107,7 @@ public final class HybridAnalyzer {
         MessageDigest digest = MessageDigest.getInstance("SHA-256");
         List<Map<String, Object>> javaSources = new ArrayList<>();
         List<Map<String, Object>> buildFiles = new ArrayList<>();
+        List<Map<String, Object>> versionCatalogs = new ArrayList<>();
         List<Map<String, Object>> diagnostics = new ArrayList<>();
         int skippedLargeFiles = 0;
 
@@ -128,6 +132,8 @@ public final class HybridAnalyzer {
 
             if (path.endsWith(".java")) {
                 javaSources.add(parseJava(javaParser, path, source, diagnostics));
+            } else if (isVersionCatalog(path)) {
+                versionCatalogs.add(parseVersionCatalog(path, source, diagnostics));
             } else if (isGradleFile(path)) {
                 buildFiles.add(parseGradle(path, source, diagnostics));
             } else if (path.endsWith("pom.xml")) {
@@ -151,6 +157,10 @@ public final class HybridAnalyzer {
                 .filter(item -> "maven".equals(item.get("build_system")) && Boolean.TRUE.equals(item.get("parsed")))
                 .count();
 
+        int catalogAliasCount = versionCatalogs.stream()
+                .mapToInt(item -> ((List<?>) item.get("aliases")).size())
+                .sum();
+
         Map<String, Object> summary = new LinkedHashMap<>();
         summary.put("files_scanned", candidates.size());
         summary.put("java_files", javaSources.size());
@@ -161,6 +171,8 @@ public final class HybridAnalyzer {
         summary.put("parsed_maven_files", parsedPomFiles);
         summary.put("java_type_declarations", typeCount);
         summary.put("java_method_declarations", methodCount);
+        summary.put("version_catalog_files", versionCatalogs.size());
+        summary.put("version_catalog_aliases", catalogAliasCount);
         summary.put("diagnostics", diagnostics.size());
         summary.put("file_limit_reached", fileLimitReached);
         summary.put("skipped_large_files", skippedLargeFiles);
@@ -169,7 +181,7 @@ public final class HybridAnalyzer {
         analyzer.put("name", "qivra-hybrid-source-analyzer");
         analyzer.put("version", VERSION);
         analyzer.put("java_parser", "com.github.javaparser:javaparser-core:3.28.2");
-        analyzer.put("openrewrite", "org.openrewrite:rewrite-gradle,rewrite-xml:8.90.4");
+        analyzer.put("openrewrite", "org.openrewrite:rewrite-gradle,rewrite-xml,rewrite-toml:8.90.4");
 
         Map<String, Object> snapshot = new LinkedHashMap<>();
         snapshot.put("recognized_files_sha256", toHex(digest.digest()));
@@ -181,6 +193,7 @@ public final class HybridAnalyzer {
         inventory.put("summary", summary);
         inventory.put("java_sources", javaSources);
         inventory.put("build_files", buildFiles);
+        inventory.put("version_catalogs", versionCatalogs);
         inventory.put("diagnostics", diagnostics);
         return inventory;
     }
@@ -308,6 +321,170 @@ public final class HybridAnalyzer {
         return output;
     }
 
+    private static Map<String, Object> parseVersionCatalog(
+            String path,
+            String source,
+            List<Map<String, Object>> diagnostics
+    ) {
+        List<String> errors = new ArrayList<>();
+        InMemoryExecutionContext context = new InMemoryExecutionContext(error ->
+                errors.add(error.getClass().getSimpleName() + ": " + String.valueOf(error.getMessage())));
+        Parser.Input input = Parser.Input.fromString(Path.of(path), source);
+        SourceFile parsed = null;
+        try {
+            parsed = new TomlParser().parseInputs(List.of(input), null, context).findFirst().orElse(null);
+        } catch (RuntimeException error) {
+            errors.add(error.getClass().getSimpleName() + ": " + String.valueOf(error.getMessage()));
+        }
+
+        List<Map<String, Object>> aliases = new ArrayList<>();
+        boolean valid = parsed instanceof Toml.Document && !(parsed instanceof ParseError);
+        if (valid) {
+            Toml.Document document = (Toml.Document) parsed;
+            for (TomlValue value : document.getValues()) {
+                if (!(value instanceof Toml.Table table) || table.getName() == null) {
+                    continue;
+                }
+                String section = table.getName().getName();
+                for (Toml entry : table.getValues()) {
+                    if (!(entry instanceof Toml.KeyValue keyValue)) {
+                        continue;
+                    }
+                    Map<String, Object> alias = new LinkedHashMap<>();
+                    alias.put("section", section);
+                    alias.put("alias", tomlKeyName(keyValue));
+                    alias.put("declaration", tomlValue(keyValue.getValue()));
+                    aliases.add(alias);
+                }
+            }
+        } else {
+            diagnostics.add(diagnostic(
+                    "GRADLE_VERSION_CATALOG_PARSE_ERROR",
+                    joinErrors(errors, "OpenRewrite could not parse the Gradle version catalog TOML."),
+                    path
+            ));
+        }
+
+        aliases.sort(Comparator
+                .comparing((Map<String, Object> item) -> String.valueOf(item.get("section")))
+                .thenComparing(item -> String.valueOf(item.get("alias"))));
+        Map<String, Object> output = new LinkedHashMap<>();
+        output.put("path", path);
+        output.put("parser", "OpenRewrite TomlParser 8.90.4");
+        output.put("parsed", valid);
+        output.put("aliases", aliases);
+        output.put("diagnostics", errors);
+        return output;
+    }
+
+    private static String tomlKeyName(Toml.KeyValue keyValue) {
+        if (keyValue.getKey() instanceof Toml.Identifier identifier) {
+            return identifier.getName();
+        }
+        return String.valueOf(keyValue.getKey());
+    }
+
+    private static Object tomlValue(Toml value) {
+        if (value instanceof Toml.Literal literal) {
+            return literal.getValue();
+        }
+        if (value instanceof Toml.Array array) {
+            return array.getValues().stream().map(HybridAnalyzer::tomlValue).toList();
+        }
+        if (value instanceof Toml.Table table) {
+            Map<String, Object> nested = new LinkedHashMap<>();
+            for (Toml entry : table.getValues()) {
+                if (entry instanceof Toml.KeyValue keyValue) {
+                    nested.put(tomlKeyName(keyValue), tomlValue(keyValue.getValue()));
+                }
+            }
+            return nested;
+        }
+        return null;
+    }
+
+    private static Map<String, Object> parseVersionCatalog(
+            String path,
+            String source,
+            List<Map<String, Object>> diagnostics
+    ) {
+        List<String> errors = new ArrayList<>();
+        InMemoryExecutionContext context = new InMemoryExecutionContext(error ->
+                errors.add(error.getClass().getSimpleName() + ": " + String.valueOf(error.getMessage())));
+        Parser.Input input = Parser.Input.fromString(Path.of(path), source);
+        SourceFile parsed = null;
+        try {
+            parsed = new TomlParser().parseInputs(List.of(input), null, context).findFirst().orElse(null);
+        } catch (RuntimeException error) {
+            errors.add(error.getClass().getSimpleName() + ": " + String.valueOf(error.getMessage()));
+        }
+
+        List<Map<String, Object>> aliases = new ArrayList<>();
+        boolean valid = parsed instanceof Toml.Document && !(parsed instanceof ParseError);
+        if (valid) {
+            Toml.Document document = (Toml.Document) parsed;
+            for (TomlValue value : document.getValues()) {
+                if (!(value instanceof Toml.Table table) || table.getName() == null) {
+                    continue;
+                }
+                String section = table.getName().getName();
+                for (Toml entry : table.getValues()) {
+                    if (!(entry instanceof Toml.KeyValue keyValue)) {
+                        continue;
+                    }
+                    Map<String, Object> alias = new LinkedHashMap<>();
+                    alias.put("section", section);
+                    alias.put("alias", tomlKeyName(keyValue));
+                    alias.put("declaration", tomlValue(keyValue.getValue()));
+                    aliases.add(alias);
+                }
+            }
+        } else {
+            diagnostics.add(diagnostic(
+                    "GRADLE_VERSION_CATALOG_PARSE_ERROR",
+                    joinErrors(errors, "OpenRewrite could not parse the Gradle version catalog TOML."),
+                    path
+            ));
+        }
+
+        aliases.sort(Comparator
+                .comparing((Map<String, Object> item) -> String.valueOf(item.get("section")))
+                .thenComparing(item -> String.valueOf(item.get("alias"))));
+        Map<String, Object> output = new LinkedHashMap<>();
+        output.put("path", path);
+        output.put("parser", "OpenRewrite TomlParser 8.90.4");
+        output.put("parsed", valid);
+        output.put("aliases", aliases);
+        output.put("diagnostics", errors);
+        return output;
+    }
+
+    private static String tomlKeyName(Toml.KeyValue keyValue) {
+        if (keyValue.getKey() instanceof Toml.Identifier identifier) {
+            return identifier.getName();
+        }
+        return String.valueOf(keyValue.getKey());
+    }
+
+    private static Object tomlValue(Toml value) {
+        if (value instanceof Toml.Literal literal) {
+            return literal.getValue();
+        }
+        if (value instanceof Toml.Array array) {
+            return array.getValues().stream().map(HybridAnalyzer::tomlValue).toList();
+        }
+        if (value instanceof Toml.Table table) {
+            Map<String, Object> nested = new LinkedHashMap<>();
+            for (Toml entry : table.getValues()) {
+                if (entry instanceof Toml.KeyValue keyValue) {
+                    nested.put(tomlKeyName(keyValue), tomlValue(keyValue.getValue()));
+                }
+            }
+            return nested;
+        }
+        return null;
+    }
+
     private static Map<String, Object> parsePom(
             String path,
             String source,
@@ -355,12 +532,17 @@ public final class HybridAnalyzer {
 
     private static boolean isSupportedFile(Path path) {
         String name = path.getFileName().toString();
-        return name.endsWith(".java")
+        return isVersionCatalog(name)
+                || name.endsWith(".java")
                 || name.equals("pom.xml")
                 || name.equals("build.gradle")
                 || name.equals("build.gradle.kts")
                 || name.equals("settings.gradle")
                 || name.equals("settings.gradle.kts");
+    }
+
+    private static boolean isVersionCatalog(String path) {
+        return path.endsWith(".versions.toml");
     }
 
     private static boolean isGradleFile(String path) {

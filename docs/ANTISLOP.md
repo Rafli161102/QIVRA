@@ -56,3 +56,8 @@ Official installation guide: https://github.com/miqdadbadjuber/anti-slop/blob/ma
 7. Review the licensing notices whenever these upstream files are updated or redistributed.
 
 The design direction is documented, but this integration does not claim that QIVRA's website has been designed or implemented.
+
+
+## Related engineering workflow skills
+
+QIVRA also vendors three selected Superpowers instruction files for test-driven development, systematic debugging, and verification before completion. They are separate from Anti Slop and retain their own MIT notice. See [AI_SKILLS.md](AI_SKILLS.md) for the combined inventory and the reviewed-but-not-vendored repositories.

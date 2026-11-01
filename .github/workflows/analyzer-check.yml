@@ -37,7 +37,7 @@ jobs:
       - name: Verify Python inventory against fixtures
         run: |
           python -m engine.analyzer.qivra_analyzer engine/analyzer/fixtures --pretty > /tmp/qivra-python-inventory.json
-          python -c "import json; d=json.load(open('/tmp/qivra-python-inventory.json')); assert d['schema_version'] == '1.0.0'; assert d['summary']['project_count'] >= 2"
+          python -c "import json; d=json.load(open('/tmp/qivra-python-inventory.json')); assert d['schema_version'] == '1.1.0'; assert d['summary']['project_count'] >= 2"
 
   hybrid-analyzer:
     runs-on: ubuntu-latest

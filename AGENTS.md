@@ -19,3 +19,14 @@ For UI work, read the product-owner-authored `DESIGN.md` before choosing visual 
 
 To update the project-local skills from the official installer, run `npx antislop-ai --update` from the QIVRA repository root (Node.js 18+). Review the resulting changes and license notices before committing. Start a new agent session after installation or update.
 <!-- antislop:end -->
+
+## Engineering workflow skills (Superpowers)
+
+For backend, analyzer, test, and integration work, use the selected project-local Superpowers skills:
+- Test-first implementation: .agents/skills/test-driven-development/SKILL.md
+- Root-cause investigation: .agents/skills/systematic-debugging/SKILL.md
+- Completion verification: .agents/skills/verification-before-completion/SKILL.md
+
+These three skills complement Anti Slop: Anti Slop governs design and interaction quality, while the selected Superpowers skills govern test-first coding, evidence-led debugging, and fresh verification. They are instruction files only; they add no runtime package or service. Read docs/AI_SKILLS.md for the project inventory and provenance.
+
+Do not assume sub-agent dispatch, parallel-agent orchestration, or other host-specific actions are available. QIVRA vendors only the three workflow skills selected above; it does not vendor the complete Superpowers framework.

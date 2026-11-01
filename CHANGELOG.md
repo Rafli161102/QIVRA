@@ -7,6 +7,10 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 ## [Unreleased]
 
 ### Added
+- Added local-only Maven parent-POM inheritance and property interpolation, plus dependency-management/BOM/plugin-management and profile-activation declaration inventory in the Python scanner.
+- Added OpenRewrite TOML parser integration for Gradle version catalog aliases in gradle/libs.versions.toml; hybrid inventory schema is now 1.2.0.
+- Added a selected Superpowers skill snapshot for test-driven development, systematic debugging, and verification-before-completion, with its MIT notice preserved.
+- Added docs/AI_SKILLS.md to map installed skills, reviewed repositories, workflow responsibilities, and host-capability limits.
 - Added a hybrid Java source analyzer using JavaParser 3.28.2 for AST inventory and OpenRewrite 8.90.4 parser modules for Gradle Groovy/Kotlin and Maven POM XML syntax.
 - Added Java source fixtures for legacy-style classes, records, switch expressions, and malformed source, plus a combined analyzer CI gate.
 - Added versioned hybrid inventory schema 1.1.0, pinned upstream provenance documentation, and Apache-2.0 notices for the selected parser components.
@@ -31,13 +35,13 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 - Declared the npm workspace package manager version in the root package manifest.
 
 ### Notes
-- The public website foundation is separate from the QIVRA modernization engine. The P0.2 analyzer now includes a local Python metadata scanner and a JavaParser/OpenRewrite static source-parser prototype; no hosted migration service, effective build-model resolver, or transformation engine is available.
+- The public website foundation is separate from the QIVRA modernization engine. The P0.2 analyzer includes a Python metadata scanner with local-only Maven parent/property handling and an OpenRewrite hybrid parser for Java AST, Gradle/POM syntax, and TOML version catalogs. It still does not provide full effective Maven/Gradle models, dependency resolution, a hosted migration service, or a transformation engine.
 - The website workflow and Java scope are presented as planned product behavior, not released capabilities.
 - No logo, custom illustration, customer imagery, testimonials, benchmark figures, or performance claims were added.
 - The website build must pass the website-check workflow before it is considered build-verified.
 - Playwright is a development-only dependency and its Apache-2.0 license notice is retained.
 - Added the npm workspace lockfile. CI now installs from the committed lockfile using `npm ci`; direct and transitive license review and SBOM generation remain production release requirements.
-- No OpenRewrite recipes, transformation engine, effective Maven/Gradle model resolver, or customer build-script execution has been integrated.
+- No OpenRewrite recipes, transformation engine, full effective Maven/Gradle model resolver, dependency resolver, or customer build-script execution has been integrated.
 - Vercel preview deployment remains pending project connection; no deployment URL or production domain is claimed.
 
 ## Release policy

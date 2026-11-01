@@ -8,16 +8,7 @@ The website workspace uses Next.js and React at runtime. Playwright is included 
 
 ## Required review for every dependency
 
-Before adding a dependency, record:
-
-1. Exact package coordinates, version, repository, and artifact source.
-2. License declared by the exact source release and published artifact.
-3. License files, copyright notices, and NOTICE obligations.
-4. Direct and transitive dependency licenses.
-5. Whether the license permits the intended hosted service, redistribution, modification, and commercial use.
-6. Required source disclosure, attribution, patent, trademark, or additional terms.
-7. Security advisories and provenance/signature information.
-8. Reviewer, review date, and approval decision.
+Before adding a dependency, record exact coordinates and version, source release and artifact repository, license file and NOTICE obligations, direct and transitive dependencies, commercial/hosted-service permission, required attribution/patent/source obligations, security advisories/provenance, and review decision.
 
 Do not infer the license of a Maven artifact from the license of a similarly named repository or neighboring module. Review the exact artifact and all bundled components.
 
@@ -36,8 +27,8 @@ Do not infer the license of a Maven artifact from the license of a similarly nam
 
 - Upstream: https://github.com/openrewrite/rewrite
 - Release: v8.90.4
-- Artifacts: org.openrewrite:rewrite-gradle:8.90.4 and org.openrewrite:rewrite-xml:8.90.4.
-- Purpose: Gradle Groovy/Kotlin syntax parsing and Maven POM XML syntax parsing.
+- Artifacts: org.openrewrite:rewrite-gradle:8.90.4, org.openrewrite:rewrite-xml:8.90.4, org.openrewrite:rewrite-toml:8.90.4.
+- Purpose: Gradle Groovy/Kotlin syntax, Maven POM XML syntax, and Gradle version-catalog TOML syntax.
 - License: Apache-2.0 for the selected parser modules; preserve LICENSES/OPENREWRITE-APACHE-2.0.txt.
 - The broader OpenRewrite ecosystem includes other modules, recipe packs, plugins, and commercial offerings. They must not be assumed to share one license.
 - No recipes, plugins, OpenRewrite Maven model resolver, or source files are included in this integration.
@@ -47,30 +38,48 @@ The selected parser modules are pinned in engine/analyzer-java/pom.xml. Their tr
 ## Vendored agent guidance: Anti Slop
 
 - Upstream: https://github.com/miqdadbadjuber/anti-slop
-- Snapshot: v3.2.24; upstream Git tree `3005235d030b4793146ad9afe8d01045efd90e1d` (retrieved 2026-10-31).
-- Scope: project-local agent instructions under `.agents/skills/`. This is development tooling/documentation, not a website runtime dependency.
-- License: MIT. Preserve the upstream notice at `LICENSES/ANTI-SLOP-MIT.txt`.
-- The `antislop-ui` and `antislop-human` skill bundles include material from web-quality-skills; its separate MIT notice is preserved at `LICENSES/WEB-QUALITY-SKILLS-MIT.txt` and in the respective skill directories.
-- QIVRA's Apache-2.0 license does not replace these upstream MIT terms. The vendored files remain subject to their applicable upstream notices.
-- Update the snapshot using the documented upstream installer/update procedure in [ANTISLOP.md](ANTISLOP.md), then review the diff and license changes before merging.
+- Snapshot: v3.2.24; upstream Git tree 3005235d030b4793146ad9afe8d01045efd90e1d (retrieved 2026-10-31).
+- Scope: project-local agent instructions under .agents/skills/. This is development tooling/documentation, not a website runtime dependency.
+- License: MIT. Preserve LICENSES/ANTI-SLOP-MIT.txt.
+- The antislop-ui and antislop-human skill bundles include material from web-quality-skills; its separate MIT notice is preserved in LICENSES/WEB-QUALITY-SKILLS-MIT.txt and in the respective skill directories.
+
+## Vendored agent workflow skills: Superpowers
+
+- Upstream: https://github.com/obra/superpowers
+- Snapshot commit: 2ce8aa15d05bd57213e6f746f953aafb7ded7a8b.
+- Selected files: systematic-debugging, test-driven-development, and verification-before-completion.
+- License: MIT. Preserve LICENSES/SUPERPOWERS-MIT.txt.
+- Scope: project-local development instructions only. No upstream runtime, plugin, sub-agent runner, or host integration is included.
+- Only these three skills are vendored; QIVRA does not redistribute the complete Superpowers framework.
+
+## Reviewed / deferred projects
+
+| Project | License / provenance | Intended role | Decision |
+|---|---|---|---|
+| Apache Maven Resolver | Apache-2.0 upstream | Remote or cached dependency resolution | Deferred: needs explicit egress allow-list, offline policy, credentials isolation, cache controls, and audit trail |
+| Anchore Syft | Apache-2.0 upstream | SBOM generation for source/filesystem/container releases | Candidate for release engineering; not part of static P0.2 parser |
+| Anthropic Agent Skills | Public skills repository; review each individual skill license | Additional task skills | Reviewed, not imported wholesale; integrate only a specific, necessary skill after provenance review |
+| GitHub Awesome Copilot | MIT repository, community Copilot-focused catalog | Copilot-specific prompts/agents | Reviewed, not imported; broad and overlaps existing QIVRA workflow skills |
 
 ## Dependency register
 
-| Component | Candidate version | Intended use | License | Status |
+| Component | Version | Intended use | License | Status |
 |---|---|---|---|---|
-| JavaParser core | 3.28.2 | Java AST inventory | Apache-2.0 option selected (upstream also offers LGPL-3.0) | Integrated in local hybrid analyzer |
-| OpenRewrite Gradle parser | 8.90.4 | Gradle Groovy/Kotlin syntax parsing | Apache-2.0 | Integrated in local hybrid analyzer |
-| OpenRewrite XML parser | 8.90.4 | Maven POM XML syntax parsing | Apache-2.0 | Integrated in local hybrid analyzer |
+| JavaParser core | 3.28.2 | Java AST inventory | Apache-2.0 option selected (upstream also offers LGPL-3.0) | Integrated |
+| OpenRewrite Gradle parser | 8.90.4 | Gradle Groovy/Kotlin syntax | Apache-2.0 | Integrated |
+| OpenRewrite XML parser | 8.90.4 | Maven POM XML syntax | Apache-2.0 | Integrated |
+| OpenRewrite TOML parser | 8.90.4 | Gradle version catalog syntax | Apache-2.0 | Integrated |
 | OpenRewrite recipes / plugins | Not selected | Future transformations | Review each artifact independently | Not integrated |
 | Maven Resolver | Not selected | Future dependency resolution | Apache-2.0 upstream; artifact/transitive review pending | Deferred |
-| Next.js | 16.4.3 | Website runtime | MIT | Integrated; direct and transitive versions recorded in package-lock.json; license review pending |
-| React / React DOM | 19.3.1 | Website runtime | MIT | Integrated; direct and transitive versions recorded in package-lock.json; license review pending |
-| `@playwright/test` | 1.64.1 | Development-only browser checks | Apache-2.0 | Integrated; notice retained; lockfile committed |
-| TypeScript | 5.9.3 | Website type checking | Apache-2.0 | Integrated in website workspace; lockfile committed |
-| `@types/node`, `@types/react`, `@types/react-dom` | Pinned in package manifest | Development typings | MIT | Integrated in website workspace; lockfile committed |
-| Container runtime | Deployment-dependent | Worker isolation | Review distribution and hosting terms | Not integrated |
+| Syft | Not selected | Release SBOM generation | Apache-2.0 upstream; binary distribution review pending | Candidate only |
+| Anti Slop | v3.2.24 | AI development quality instructions | MIT | Vendored |
+| Superpowers selected skills | Commit 2ce8aa15d05bd57213e6f746f953aafb7ded7a8b | TDD, systematic debugging, verification | MIT | Vendored |
+| Next.js | 16.4.3 | Website runtime | MIT | Integrated; transitive license review pending |
+| React / React DOM | 19.3.1 | Website runtime | MIT | Integrated; transitive license review pending |
+| @playwright/test | 1.64.1 | Development-only browser checks | Apache-2.0 | Integrated; notice retained |
+| TypeScript | 5.9.3 | Website type checking | Apache-2.0 | Integrated |
 
-The root `package-lock.json` records the resolved direct and transitive npm dependency graph for reproducible installation. This does not replace the required package-by-package license review, security review, or generated SBOM. Update this table whenever a dependency is proposed, added, upgraded, or removed. Complete the transitive license review and generate an SBOM before the first production release.
+The root package-lock.json records the resolved direct and transitive npm dependency graph for reproducible installation. It does not replace package-level license review, security review, or an SBOM. Complete transitive dependency and SBOM review before the first production release.
 
 ## Release gate
 

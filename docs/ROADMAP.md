@@ -30,12 +30,16 @@ Deliverables:
 - [x] Malformed Maven POM diagnostics with file evidence.
 - [x] Versioned JSON inventory schema and deterministic snapshot digest.
 - [x] Initial fixture corpus for Maven, Gradle, nested, mixed, and malformed projects.
-- [ ] Improve Gradle project-directory mapping, version catalogs, and computed declarations.
-- [ ] Add Maven parent inheritance, profile-aware parsing, and richer diagnostics.
+- [x] Parse Gradle version-catalog TOML files and inventory version, library, and plugin aliases.
+- [ ] Improve Gradle project-directory mapping, catalog accessor linkage, and computed declarations.
+- [x] Resolve local parent POM metadata and inherited properties without remote downloads.
+- [x] Inventory dependency management, BOM declarations, plugin management, and Maven profile activation predicates without evaluating them.
+- [ ] Add full Maven effective-model semantics, profile activation, BOM expansion, and remote-parent policy.
 - [x] Add first-pass JavaParser AST signals for packages, imports, type/method declarations, method-call names, language features, and source lines.
 - [x] Add OpenRewrite syntax parsing for Gradle Groovy/Kotlin scripts and Maven POM XML, without build execution.
 - [ ] Add resolved Java API identity and richer source-level compatibility signals with file and line evidence.
 - [x] Add Java fixtures for legacy classes, records, switch expressions, and malformed Java syntax; run the combined parser in CI.
+- [x] Add fixtures and tests for local/missing Maven parents, inherited properties, BOM/profile declarations, and Gradle version-catalog aliases.
 - [ ] Expand fixture coverage and validate against representative repositories.
 
 Acceptance criteria:
@@ -44,7 +48,7 @@ Acceptance criteria:
 - Tests prove behavior for Maven, Gradle, mixed, nested, and malformed fixtures.
 - Output is deterministic for the same input snapshot and analyzer version.
 
-The initial Python scanner is a declaration-level metadata inventory. The Java hybrid parser adds syntax trees and declarations but does not resolve symbols, dependencies, effective Maven/Gradle models, or compatibility rules; it does not produce migration recommendations. P0.2 remains open until the remaining items and acceptance criteria are verified.
+The Python scanner resolves only local Maven parent metadata and property inheritance; profiles and BOMs remain declaration inventories. The Java hybrid parser adds Java ASTs, Gradle/POM syntax parsing, and TOML catalog alias inventory but does not resolve Java symbols or Gradle/Maven effective models, or produce migration recommendations. P0.2 remains open until the remaining items and acceptance criteria are verified.
 
 ### P0.3 — Modernization assessment and plan
 - Introduce target profiles, initially Java 17.

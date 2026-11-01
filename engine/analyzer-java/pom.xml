@@ -5,7 +5,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>dev.qivra</groupId>
   <artifactId>qivra-hybrid-source-analyzer</artifactId>
-  <version>0.2.0</version>
+  <version>0.3.0</version>
   <name>QIVRA Hybrid Source Analyzer</name>
   <description>Java AST inventory and static Maven/Gradle syntax parsing for QIVRA.</description>
   <properties>
@@ -26,6 +26,11 @@
     <dependency>
       <groupId>org.openrewrite</groupId>
       <artifactId>rewrite-xml</artifactId>
+      <version>8.90.4</version>
+    </dependency>
+    <dependency>
+      <groupId>org.openrewrite</groupId>
+      <artifactId>rewrite-toml</artifactId>
       <version>8.90.4</version>
     </dependency>
   </dependencies>

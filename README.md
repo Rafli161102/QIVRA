@@ -58,7 +58,7 @@ npm run dev
 
 Run type checks and the production build with `npm run typecheck` and `npm run build`. For browser verification, build first, install Chromium using `npx playwright install chromium`, then run `npm run test:e2e`.
 
-Run the Python metadata inventory with Python 3.10+: `python -m engine.analyzer.qivra_analyzer ./path/to/repository --pretty`. For the combined Java AST + Gradle/POM syntax inventory, use the Java 21 module described in [engine/analyzer-java/README.md](engine/analyzer-java/README.md). Both modes are local and static; they do not execute project build scripts. See [docs/ANALYZER.md](docs/ANALYZER.md) and [docs/OSS_INTEGRATION.md](docs/OSS_INTEGRATION.md).
+Run the Python metadata inventory with Python 3.10+: `python -m engine.analyzer.qivra_analyzer ./path/to/repository --pretty`. It inspects local Maven parent/POM declarations and static profiles/BOM metadata without network access. For the combined Java AST + Gradle/POM/TOML syntax inventory, use the Java 21 module described in [engine/analyzer-java/README.md](engine/analyzer-java/README.md). Both modes are local and static; they do not execute project build scripts. See [docs/ANALYZER.md](docs/ANALYZER.md), [docs/OSS_INTEGRATION.md](docs/OSS_INTEGRATION.md), and [docs/AI_SKILLS.md](docs/AI_SKILLS.md).
 
 The website includes production SEO metadata, a production-only sitemap, non-indexable preview robots behavior, and baseline response security headers. See [docs/WEBSITE.md](docs/WEBSITE.md) and [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md) for implementation and Vercel setup.
 
@@ -112,7 +112,7 @@ See [CHANGELOG.md](CHANGELOG.md) for recorded changes and [docs/ROADMAP.md](docs
 
 ## AI-assisted development quality
 
-QIVRA vendors the [Anti Slop agent skills](https://github.com/miqdadbadjuber/anti-slop) for UI, accessibility, responsive layout, copywriting, and code-comment hygiene. The project snapshot and update procedure are documented in [docs/ANTISLOP.md](docs/ANTISLOP.md). Read [AGENTS.md](AGENTS.md) before AI-assisted development. All UI work must follow the product-owner-approved [design direction](DESIGN.md) and pass the Anti Slop Delivery Gate.
+QIVRA vendors [Anti Slop](https://github.com/miqdadbadjuber/anti-slop) for UI, accessibility, responsive layout, copywriting, and code-comment hygiene, plus selected [Superpowers](https://github.com/obra/superpowers) workflow skills for TDD, systematic debugging, and evidence-based verification. The project snapshot and update procedure are documented in [docs/ANTISLOP.md](docs/ANTISLOP.md). The full skill inventory and selection rationale are in [docs/AI_SKILLS.md](docs/AI_SKILLS.md). Read [AGENTS.md](AGENTS.md) before AI-assisted development. All UI work must follow the product-owner-approved [design direction](DESIGN.md) and pass the Anti Slop Delivery Gate.
 
 ## Security
 

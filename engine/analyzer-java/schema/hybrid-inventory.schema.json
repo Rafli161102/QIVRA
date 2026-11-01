@@ -4,7 +4,7 @@
   "type": "object",
   "required": ["schema_version", "analyzer", "snapshot", "summary", "java_sources", "build_files", "diagnostics"],
   "properties": {
-    "schema_version": { "const": "1.1.0" },
+    "schema_version": { "const": "1.2.0" },
     "analyzer": {
       "type": "object",
       "required": ["name", "version", "java_parser", "openrewrite"],
@@ -26,7 +26,7 @@
     },
     "summary": {
       "type": "object",
-      "required": ["files_scanned", "java_files", "parsed_java_files", "gradle_files", "parsed_gradle_files", "maven_files", "parsed_maven_files", "java_type_declarations", "java_method_declarations", "diagnostics", "file_limit_reached", "skipped_large_files"],
+      "required": ["files_scanned", "java_files", "parsed_java_files", "gradle_files", "parsed_gradle_files", "maven_files", "parsed_maven_files", "java_type_declarations", "java_method_declarations", "version_catalog_files", "version_catalog_aliases", "diagnostics", "file_limit_reached", "skipped_large_files", "version_catalog_files", "version_catalog_aliases"],
       "properties": {
         "files_scanned": { "type": "integer", "minimum": 0 },
         "java_files": { "type": "integer", "minimum": 0 },
@@ -39,12 +39,15 @@
         "java_method_declarations": { "type": "integer", "minimum": 0 },
         "diagnostics": { "type": "integer", "minimum": 0 },
         "file_limit_reached": { "type": "boolean" },
-        "skipped_large_files": { "type": "integer", "minimum": 0 }
+        "skipped_large_files": { "type": "integer", "minimum": 0 },
+        "version_catalog_files": { "type": "integer", "minimum": 0 },
+        "version_catalog_aliases": { "type": "integer", "minimum": 0 }
       },
       "additionalProperties": false
     },
     "java_sources": { "type": "array", "items": { "type": "object" } },
     "build_files": { "type": "array", "items": { "type": "object" } },
+    "version_catalogs": { "type": "array", "items": { "type": "object" } },
     "diagnostics": { "type": "array", "items": { "type": "object" } }
   },
   "additionalProperties": false

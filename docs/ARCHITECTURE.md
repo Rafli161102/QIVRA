@@ -47,7 +47,7 @@ This document describes the intended architecture. It is not an implementation i
           [Artifact / Report Store]
 ```
 
-The diagram is conceptual. No production deployment topology is committed yet. P0.2 currently has a Python standard-library metadata scanner and a separate Java 21 hybrid parser module: JavaParser supplies Java AST signals, while OpenRewrite's Gradle and XML parsers inspect Gradle scripts and POM syntax. These parsers do not execute customer build scripts or perform dependency resolution; they are not the transformation engine.
+The diagram is conceptual. No production deployment topology is committed yet. P0.2 currently has a Python standard-library metadata scanner with repository-local Maven parent/property inheritance, plus a separate Java 21 hybrid parser module: JavaParser supplies Java AST signals, while OpenRewrite Gradle, XML, and TOML parsers inspect Gradle scripts, POM syntax, and version catalogs. These parsers do not execute customer build scripts or resolve remote dependencies; they are not the transformation engine.
 
 ## Control plane
 
