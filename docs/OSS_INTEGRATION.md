@@ -9,10 +9,10 @@ QIVRA combines complementary open-source parsers behind a small analyzer boundar
 | Upstream | Release | Selected artifacts | Analyzer role | License selection |
 |---|---|---|---|---|
 | JavaParser | javaparser-parent-3.28.2 | com.github.javaparser:javaparser-core:3.28.2 | Java AST inventory and source line locations | Apache-2.0 option; upstream also offers LGPL-3.0 |
-| OpenRewrite | v8.96.3 | org.openrewrite:rewrite-gradle:8.96.3 | Gradle Groovy/Kotlin syntax parsing | Apache-2.0 |
-| OpenRewrite | v8.96.3 | org.openrewrite:rewrite-xml:8.96.3 | Maven POM XML syntax parsing | Apache-2.0 |
+| OpenRewrite | v8.90.4 | org.openrewrite:rewrite-gradle:8.90.4 | Gradle Groovy/Kotlin syntax parsing | Apache-2.0 |
+| OpenRewrite | v8.90.4 | org.openrewrite:rewrite-xml:8.90.4 | Maven POM XML syntax parsing | Apache-2.0 |
 
-Exact coordinates are pinned in engine/analyzer-java/pom.xml. Upstream Apache license texts are preserved in LICENSES and referenced from THIRD-PARTY-NOTICES.md.
+Exact coordinates are pinned in engine/analyzer-java/pom.xml. OpenRewrite's v8.90.4 source tag is used because the matching rewrite-gradle and rewrite-xml artifacts are published to Maven Central. Newer OpenRewrite source releases such as v8.96.3 are distributed through the Code Genome Project artifact repository, which requires authentication; this prototype deliberately avoids adding that credentialed repository to public CI. Upstream Apache license texts are preserved in LICENSES and referenced from THIRD-PARTY-NOTICES.md.
 
 ## Combined analysis path
 

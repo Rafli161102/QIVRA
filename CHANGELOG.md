@@ -7,7 +7,7 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 ## [Unreleased]
 
 ### Added
-- Added a hybrid Java source analyzer using JavaParser 3.28.2 for AST inventory and OpenRewrite 8.96.3 parser modules for Gradle Groovy/Kotlin and Maven POM XML syntax.
+- Added a hybrid Java source analyzer using JavaParser 3.28.2 for AST inventory and OpenRewrite 8.90.4 parser modules for Gradle Groovy/Kotlin and Maven POM XML syntax.
 - Added Java source fixtures for legacy-style classes, records, switch expressions, and malformed source, plus a combined analyzer CI gate.
 - Added versioned hybrid inventory schema 1.1.0, pinned upstream provenance documentation, and Apache-2.0 notices for the selected parser components.
 - Added the root npm workspace lockfile and deterministic dependency installation with `npm ci`.

@@ -49,10 +49,10 @@ Consult the package manifests for exact direct versions. The transitive dependen
 ## OpenRewrite parser modules
 
 - Project: https://github.com/openrewrite/rewrite
-- Source release: v8.96.3
+- Source release: v8.90.4
 - Selected artifacts:
-  - org.openrewrite:rewrite-gradle:8.96.3
-  - org.openrewrite:rewrite-xml:8.96.3
+  - org.openrewrite:rewrite-gradle:8.90.4
+  - org.openrewrite:rewrite-xml:8.90.4
 - Purpose: static Gradle Groovy/Kotlin syntax parsing and XML parsing for Maven POMs.
 - License: Apache-2.0 for the selected modules; full license at LICENSES/OPENREWRITE-APACHE-2.0.txt.
 - No OpenRewrite recipes, plugins, Maven model resolver, or additional recipe packs are bundled in this milestone.

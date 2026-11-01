@@ -35,8 +35,8 @@ Do not infer the license of a Maven artifact from the license of a similarly nam
 ### OpenRewrite parser modules
 
 - Upstream: https://github.com/openrewrite/rewrite
-- Release: v8.96.3
-- Artifacts: org.openrewrite:rewrite-gradle:8.96.3 and org.openrewrite:rewrite-xml:8.96.3.
+- Release: v8.90.4
+- Artifacts: org.openrewrite:rewrite-gradle:8.90.4 and org.openrewrite:rewrite-xml:8.90.4.
 - Purpose: Gradle Groovy/Kotlin syntax parsing and Maven POM XML syntax parsing.
 - License: Apache-2.0 for the selected parser modules; preserve LICENSES/OPENREWRITE-APACHE-2.0.txt.
 - The broader OpenRewrite ecosystem includes other modules, recipe packs, plugins, and commercial offerings. They must not be assumed to share one license.
@@ -59,8 +59,8 @@ The selected parser modules are pinned in engine/analyzer-java/pom.xml. Their tr
 | Component | Candidate version | Intended use | License | Status |
 |---|---|---|---|---|
 | JavaParser core | 3.28.2 | Java AST inventory | Apache-2.0 option selected (upstream also offers LGPL-3.0) | Integrated in local hybrid analyzer |
-| OpenRewrite Gradle parser | 8.96.3 | Gradle Groovy/Kotlin syntax parsing | Apache-2.0 | Integrated in local hybrid analyzer |
-| OpenRewrite XML parser | 8.96.3 | Maven POM XML syntax parsing | Apache-2.0 | Integrated in local hybrid analyzer |
+| OpenRewrite Gradle parser | 8.90.4 | Gradle Groovy/Kotlin syntax parsing | Apache-2.0 | Integrated in local hybrid analyzer |
+| OpenRewrite XML parser | 8.90.4 | Maven POM XML syntax parsing | Apache-2.0 | Integrated in local hybrid analyzer |
 | OpenRewrite recipes / plugins | Not selected | Future transformations | Review each artifact independently | Not integrated |
 | Maven Resolver | Not selected | Future dependency resolution | Apache-2.0 upstream; artifact/transitive review pending | Deferred |
 | Next.js | 16.4.3 | Website runtime | MIT | Integrated; direct and transitive versions recorded in package-lock.json; license review pending |

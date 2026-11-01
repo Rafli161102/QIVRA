@@ -169,7 +169,7 @@ public final class HybridAnalyzer {
         analyzer.put("name", "qivra-hybrid-source-analyzer");
         analyzer.put("version", VERSION);
         analyzer.put("java_parser", "com.github.javaparser:javaparser-core:3.28.2");
-        analyzer.put("openrewrite", "org.openrewrite:rewrite-gradle,rewrite-xml:8.96.3");
+        analyzer.put("openrewrite", "org.openrewrite:rewrite-gradle,rewrite-xml:8.90.4");
 
         Map<String, Object> snapshot = new LinkedHashMap<>();
         snapshot.put("recognized_files_sha256", toHex(digest.digest()));
@@ -302,7 +302,7 @@ public final class HybridAnalyzer {
         Map<String, Object> output = new LinkedHashMap<>();
         output.put("path", path);
         output.put("build_system", "gradle");
-        output.put("parser", "OpenRewrite GradleParser 8.96.3");
+        output.put("parser", "OpenRewrite GradleParser 8.90.4");
         output.put("parsed", valid);
         output.put("diagnostics", errors);
         return output;
@@ -331,7 +331,7 @@ public final class HybridAnalyzer {
         Map<String, Object> output = new LinkedHashMap<>();
         output.put("path", path);
         output.put("build_system", "maven");
-        output.put("parser", "OpenRewrite XmlParser 8.96.3");
+        output.put("parser", "OpenRewrite XmlParser 8.90.4");
         output.put("parsed", valid);
         output.put("diagnostics", errors);
         return output;

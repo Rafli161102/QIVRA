@@ -7,8 +7,8 @@ The hybrid analyzer combines QIVRA's Python build-metadata inventory with a Java
 | Component | Pinned artifact | Role | License selection |
 |---|---|---|---|
 | JavaParser | com.github.javaparser:javaparser-core:3.28.2 | Java AST, package/import/type/method declarations, and source line evidence | Apache-2.0 option; upstream also offers LGPL-3.0 |
-| OpenRewrite Gradle parser | org.openrewrite:rewrite-gradle:8.96.3 | Static Gradle Groovy and Kotlin syntax parsing | Apache-2.0 |
-| OpenRewrite XML parser | org.openrewrite:rewrite-xml:8.96.3 | Static XML parsing for Maven POM files | Apache-2.0 |
+| OpenRewrite Gradle parser | org.openrewrite:rewrite-gradle:8.90.4 | Static Gradle Groovy and Kotlin syntax parsing | Apache-2.0 |
+| OpenRewrite XML parser | org.openrewrite:rewrite-xml:8.90.4 | Static XML parsing for Maven POM files | Apache-2.0 |
 
 The integration uses pinned Maven artifacts and does not copy upstream parser source files into this repository. See docs/OSS_INTEGRATION.md and docs/LICENSING.md for provenance, scope, and notices.
 

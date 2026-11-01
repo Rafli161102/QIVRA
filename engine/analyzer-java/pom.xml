@@ -21,12 +21,12 @@
     <dependency>
       <groupId>org.openrewrite</groupId>
       <artifactId>rewrite-gradle</artifactId>
-      <version>8.96.3</version>
+      <version>8.90.4</version>
     </dependency>
     <dependency>
       <groupId>org.openrewrite</groupId>
       <artifactId>rewrite-xml</artifactId>
-      <version>8.96.3</version>
+      <version>8.90.4</version>
     </dependency>
   </dependencies>
   <build>
