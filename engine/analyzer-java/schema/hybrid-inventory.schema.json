@@ -14,7 +14,7 @@
   ],
   "properties": {
     "schema_version": {
-      "const": "1.4.0"
+      "const": "1.5.0"
     },
     "analyzer": {
       "type": "object",
@@ -88,7 +88,12 @@
         "java_api_references",
         "java_api_resolved_references",
         "java_api_unresolved_references",
-        "java_api_workspace_source_roots"
+        "java_api_workspace_source_roots",
+        "gradle_projects_declared",
+        "gradle_project_dir_mappings",
+        "gradle_dependencies",
+        "gradle_unresolved_declarations",
+        "gradle_convention_plugin_candidates"
       ],
       "properties": {
         "files_scanned": {
@@ -187,6 +192,26 @@
           "minimum": 0
         },
         "java_api_workspace_source_roots": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "gradle_projects_declared": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "gradle_project_dir_mappings": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "gradle_dependencies": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "gradle_unresolved_declarations": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "gradle_convention_plugin_candidates": {
           "type": "integer",
           "minimum": 0
         }

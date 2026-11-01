@@ -7,7 +7,7 @@ def main():
     data = json.loads(Path(sys.argv[1]).read_text(encoding="utf-8"))
     summary = data["summary"]
 
-    assert data["schema_version"] == "1.4.0", "unexpected hybrid inventory schema"
+    assert data["schema_version"] == "1.5.0", "unexpected hybrid inventory schema"
     assert summary["java_files"] >= 3, "Java fixture files were not discovered"
     assert summary["parsed_java_files"] >= 2, "Java fixtures did not parse"
     assert summary["java_type_declarations"] >= 3, "Java type declarations were not extracted"
@@ -16,6 +16,23 @@ def main():
     assert summary["gradle_version_catalogs"] >= 1, "Gradle version catalog was not discovered"
     assert summary["parsed_gradle_version_catalogs"] >= 1, "Gradle version catalog did not parse"
     assert summary["gradle_catalog_libraries"] >= 2, "Gradle catalog library aliases were not extracted"
+    assert summary["gradle_projects_declared"] >= 2, "literal Gradle project includes were not extracted"
+    assert summary["gradle_dependencies"] >= 1, "literal Gradle dependencies were not extracted"
+    assert summary["gradle_unresolved_declarations"] >= 0, "Gradle unresolved expression count missing"
+    gradle_settings = next(item for item in data["build_files"] if item.get("build_system") == "gradle" and item["path"].endswith("settings.gradle.kts"))
+    assert gradle_settings["static_model"]["root_project_name"] == "gradle-kotlin", "Gradle root project name missing"
+    assert len(gradle_settings["static_model"]["included_projects"]) >= 2, "Gradle included project paths missing"
+    gradle_build = next(item for item in data["build_files"] if item.get("build_system") == "gradle" and item["path"].endswith("build.gradle.kts"))
+    gradle_deps = gradle_build["static_model"]["dependencies"]
+    assert any(item.get("coordinate") == "org.slf4j:slf4j-api:2.0.9" for item in gradle_deps), "Gradle literal dependency coordinate missing"
+    assert any(item.get("resolution") == "version_catalog_alias_resolved" and item.get("version") == "2.0.21" for item in gradle_deps), "Gradle library catalog alias was not linked"
+    assert any(item.get("resolution") == "literal_project_dependency" and item.get("project_path") == ":shared" for item in gradle_deps), "Gradle project dependency missing"
+    assert summary["gradle_project_dir_mappings"] >= 1, "Gradle projectDir mapping was not extracted"
+    assert summary["gradle_convention_plugin_candidates"] >= 1, "Gradle convention plugin candidate was not discovered"
+    convention = next(item for item in data["build_files"] if item["path"].endswith("com/acme/java-conventions.gradle.kts"))
+    candidate = convention["static_model"]["convention_plugin_candidates"][0]
+    assert candidate["identity_status"] == "inferred_from_path_only", "convention plugin identity must remain explicitly inferred"
+
     assert summary["maven_files"] >= 2, "Maven parent/child fixtures were not discovered"
     assert summary["parsed_maven_files"] >= 2, "Maven XML parser did not accept parent/child fixtures"
     assert summary["maven_parent_resolved"] >= 1, "workspace-relative Maven parent was not resolved"
