@@ -58,7 +58,7 @@ npm run dev
 
 Run type checks and the production build with `npm run typecheck` and `npm run build`. For browser verification, build first, install Chromium using `npx playwright install chromium`, then run `npm run test:e2e`.
 
-Run the static repository analyzer with Python 3.10+: `python -m engine.analyzer.qivra_analyzer ./path/to/repository --pretty`. It inventories Maven/Gradle declarations without executing build scripts; see [docs/ANALYZER.md](docs/ANALYZER.md).
+Run the Python metadata inventory with Python 3.10+: `python -m engine.analyzer.qivra_analyzer ./path/to/repository --pretty`. For the combined Java AST + Gradle/POM syntax inventory, use the Java 21 module described in [engine/analyzer-java/README.md](engine/analyzer-java/README.md). Both modes are local and static; they do not execute project build scripts. See [docs/ANALYZER.md](docs/ANALYZER.md) and [docs/OSS_INTEGRATION.md](docs/OSS_INTEGRATION.md).
 
 The website includes production SEO metadata, a production-only sitemap, non-indexable preview robots behavior, and baseline response security headers. See [docs/WEBSITE.md](docs/WEBSITE.md) and [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md) for implementation and Vercel setup.
 
@@ -74,7 +74,7 @@ The website includes production SEO metadata, a production-only sitemap, non-ind
 | Persistence | Users, projects, jobs, audit records | PostgreSQL |
 | Queue / coordination | Asynchronous job dispatch | Redis-compatible queue |
 
-The website and the local read-only Maven/Gradle analyzer are the first implemented workspaces. The API, Java transformation engine, workers, and remaining components are target architecture, not claims that they have been implemented.
+The website, Python build-metadata scanner, and Java hybrid source-parser prototype are the first implemented workspaces. The API, migration/recipe engine, isolated workers, and hosted workflow remain target architecture, not claims that they have been implemented.
 
 ## Repository layout
 
@@ -84,7 +84,7 @@ apps/
   api/                 planned
   dashboard/           planned
 engine/
-  analyzer/             planned
+  analyzer/             Python static scanner + JavaParser/OpenRewrite adapters (P0.2 in progress)
   migration/            planned
   recipes/              planned
   validation/           planned

@@ -21,16 +21,28 @@ Before adding a dependency, record:
 
 Do not infer the license of a Maven artifact from the license of a similarly named repository or neighboring module. Review the exact artifact and all bundled components.
 
-## Candidate: OpenRewrite
+## Integrated parser components
 
-- Upstream project: https://github.com/openrewrite/rewrite
-- Upstream project describes its core repository as Apache License 2.0.
-- The broader OpenRewrite ecosystem includes separate modules, recipe packs, plugins, and commercial offerings. They must not be assumed to share one license.
-- Before integration, inspect the exact Maven coordinates and source tag for each artifact, including recipe modules and transitive dependencies.
-- Exclude any component whose terms are unclear or incompatible with QIVRA's distribution and hosted-service model until written legal approval is obtained.
-- Do not copy or redistribute upstream recipes merely because the core repository is Apache-2.0.
+### JavaParser
 
-Status: **Not integrated — per-artifact legal and technical review required.**
+- Upstream: https://github.com/javaparser/javaparser
+- Release: javaparser-parent-3.28.2
+- Artifact: com.github.javaparser:javaparser-core:3.28.2
+- Purpose: Java AST inventory and source line evidence.
+- The upstream project offers Apache-2.0 and LGPL-3.0 licensing options. QIVRA explicitly selects its Apache-2.0 option; preserve LICENSES/JAVAPARSER-APACHE-2.0.txt.
+- No JavaParser source files are copied into QIVRA.
+
+### OpenRewrite parser modules
+
+- Upstream: https://github.com/openrewrite/rewrite
+- Release: v8.90.4
+- Artifacts: org.openrewrite:rewrite-gradle:8.90.4 and org.openrewrite:rewrite-xml:8.90.4.
+- Purpose: Gradle Groovy/Kotlin syntax parsing and Maven POM XML syntax parsing.
+- License: Apache-2.0 for the selected parser modules; preserve LICENSES/OPENREWRITE-APACHE-2.0.txt.
+- The broader OpenRewrite ecosystem includes other modules, recipe packs, plugins, and commercial offerings. They must not be assumed to share one license.
+- No recipes, plugins, OpenRewrite Maven model resolver, or source files are included in this integration.
+
+The selected parser modules are pinned in engine/analyzer-java/pom.xml. Their transitive dependencies still require package-level license and security review before production release. The integration is a pre-alpha static parser prototype, not a released migration engine.
 
 ## Vendored agent guidance: Anti Slop
 
@@ -46,8 +58,11 @@ Status: **Not integrated — per-artifact legal and technical review required.**
 
 | Component | Candidate version | Intended use | License | Status |
 |---|---|---|---|---|
-| OpenRewrite core | Not selected | Java analysis / transformation adapter | Verify exact artifact | Not integrated |
-| OpenRewrite recipe modules | Not selected | Migration recipes | Verify each artifact independently | Not integrated |
+| JavaParser core | 3.28.2 | Java AST inventory | Apache-2.0 option selected (upstream also offers LGPL-3.0) | Integrated in local hybrid analyzer |
+| OpenRewrite Gradle parser | 8.90.4 | Gradle Groovy/Kotlin syntax parsing | Apache-2.0 | Integrated in local hybrid analyzer |
+| OpenRewrite XML parser | 8.90.4 | Maven POM XML syntax parsing | Apache-2.0 | Integrated in local hybrid analyzer |
+| OpenRewrite recipes / plugins | Not selected | Future transformations | Review each artifact independently | Not integrated |
+| Maven Resolver | Not selected | Future dependency resolution | Apache-2.0 upstream; artifact/transitive review pending | Deferred |
 | Next.js | 16.4.3 | Website runtime | MIT | Integrated; direct and transitive versions recorded in package-lock.json; license review pending |
 | React / React DOM | 19.3.1 | Website runtime | MIT | Integrated; direct and transitive versions recorded in package-lock.json; license review pending |
 | `@playwright/test` | 1.64.1 | Development-only browser checks | Apache-2.0 | Integrated; notice retained; lockfile committed |

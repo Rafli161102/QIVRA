@@ -1,0 +1,51 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "QIVRA Hybrid Source Inventory",
+  "type": "object",
+  "required": ["schema_version", "analyzer", "snapshot", "summary", "java_sources", "build_files", "diagnostics"],
+  "properties": {
+    "schema_version": { "const": "1.1.0" },
+    "analyzer": {
+      "type": "object",
+      "required": ["name", "version", "java_parser", "openrewrite"],
+      "properties": {
+        "name": { "type": "string" },
+        "version": { "type": "string" },
+        "java_parser": { "type": "string" },
+        "openrewrite": { "type": "string" }
+      },
+      "additionalProperties": false
+    },
+    "snapshot": {
+      "type": "object",
+      "required": ["recognized_files_sha256"],
+      "properties": {
+        "recognized_files_sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" }
+      },
+      "additionalProperties": false
+    },
+    "summary": {
+      "type": "object",
+      "required": ["files_scanned", "java_files", "parsed_java_files", "gradle_files", "parsed_gradle_files", "maven_files", "parsed_maven_files", "java_type_declarations", "java_method_declarations", "diagnostics", "file_limit_reached", "skipped_large_files"],
+      "properties": {
+        "files_scanned": { "type": "integer", "minimum": 0 },
+        "java_files": { "type": "integer", "minimum": 0 },
+        "parsed_java_files": { "type": "integer", "minimum": 0 },
+        "gradle_files": { "type": "integer", "minimum": 0 },
+        "parsed_gradle_files": { "type": "integer", "minimum": 0 },
+        "maven_files": { "type": "integer", "minimum": 0 },
+        "parsed_maven_files": { "type": "integer", "minimum": 0 },
+        "java_type_declarations": { "type": "integer", "minimum": 0 },
+        "java_method_declarations": { "type": "integer", "minimum": 0 },
+        "diagnostics": { "type": "integer", "minimum": 0 },
+        "file_limit_reached": { "type": "boolean" },
+        "skipped_large_files": { "type": "integer", "minimum": 0 }
+      },
+      "additionalProperties": false
+    },
+    "java_sources": { "type": "array", "items": { "type": "object" } },
+    "build_files": { "type": "array", "items": { "type": "object" } },
+    "diagnostics": { "type": "array", "items": { "type": "object" } }
+  },
+  "additionalProperties": false
+}

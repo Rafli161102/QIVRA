@@ -7,6 +7,9 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 ## [Unreleased]
 
 ### Added
+- Added a hybrid Java source analyzer using JavaParser 3.28.2 for AST inventory and OpenRewrite 8.90.4 parser modules for Gradle Groovy/Kotlin and Maven POM XML syntax.
+- Added Java source fixtures for legacy-style classes, records, switch expressions, and malformed source, plus a combined analyzer CI gate.
+- Added versioned hybrid inventory schema 1.1.0, pinned upstream provenance documentation, and Apache-2.0 notices for the selected parser components.
 - Added the root npm workspace lockfile and deterministic dependency installation with `npm ci`.
 - Established the QIVRA product overview and initial Java modernization vertical slice.
 - Documented product boundaries, target architecture, security model, licensing review process, and milestone roadmap.
@@ -28,13 +31,13 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 - Declared the npm workspace package manager version in the root package manifest.
 
 ### Notes
-- The public website foundation is separate from the QIVRA modernization engine. The P0.2 analyzer is a local static inventory prototype; no hosted migration service or transformation engine is available.
+- The public website foundation is separate from the QIVRA modernization engine. The P0.2 analyzer now includes a local Python metadata scanner and a JavaParser/OpenRewrite static source-parser prototype; no hosted migration service, effective build-model resolver, or transformation engine is available.
 - The website workflow and Java scope are presented as planned product behavior, not released capabilities.
 - No logo, custom illustration, customer imagery, testimonials, benchmark figures, or performance claims were added.
 - The website build must pass the website-check workflow before it is considered build-verified.
 - Playwright is a development-only dependency and its Apache-2.0 license notice is retained.
 - Added the npm workspace lockfile. CI now installs from the committed lockfile using `npm ci`; direct and transitive license review and SBOM generation remain production release requirements.
-- No transformation engine or third-party transformation runtime dependency has been integrated yet.
+- No OpenRewrite recipes, transformation engine, effective Maven/Gradle model resolver, or customer build-script execution has been integrated.
 - Vercel preview deployment remains pending project connection; no deployment URL or production domain is claimed.
 
 ## Release policy

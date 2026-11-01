@@ -47,7 +47,7 @@ This document describes the intended architecture. It is not an implementation i
           [Artifact / Report Store]
 ```
 
-The diagram is conceptual. No production deployment topology is committed yet. The P0.2 local analyzer is implemented as a Python standard-library module for static Maven/Gradle inventory; it is not the planned Java 21 transformation engine and does not execute customer build scripts.
+The diagram is conceptual. No production deployment topology is committed yet. P0.2 currently has a Python standard-library metadata scanner and a separate Java 21 hybrid parser module: JavaParser supplies Java AST signals, while OpenRewrite's Gradle and XML parsers inspect Gradle scripts and POM syntax. These parsers do not execute customer build scripts or perform dependency resolution; they are not the transformation engine.
 
 ## Control plane
 
@@ -59,7 +59,7 @@ Initial implementation direction: TypeScript. API contracts should be versioned 
 
 Workers perform repository checkout, static inspection, transformations, and build/test validation. A worker receives only the job-scoped credentials and inputs it requires.
 
-Initial implementation direction: a Java 21 engine process, with a Docker-compatible isolated worker boundary. The isolation design must be validated on the target deployment platform before accepting untrusted workloads.
+Initial implementation direction: a Java 21 engine process, with a Docker-compatible isolated worker boundary. The current Java 21 analyzer module is a local prototype only; it does not yet implement transformations or isolated worker execution. The isolation design must be validated on the target deployment platform before accepting untrusted workloads.
 
 ## Engine adapter boundary
 
@@ -125,7 +125,9 @@ Cancellation, timeout, policy rejection, and infrastructure failure must be mode
 | Database | PostgreSQL | Relational job and project metadata |
 | Queue | Redis-compatible | Asynchronous job coordination |
 | Worker isolation | Container runtime | Disposable execution boundary; hardening required |
-| Transformation | OpenRewrite adapter | Candidate only; dependency and recipe license audit required |
+| Static Java AST | JavaParser 3.28.2 | Integrated parser dependency; Apache-2.0 option selected |
+| Build syntax parser | OpenRewrite Gradle/XML 8.96.3 | Integrated parser dependencies; Apache-2.0 selected modules only |
+| Transformation | OpenRewrite recipe adapter | Deferred; recipe and dependency license review required |
 
 Technology choices may change through documented architecture decisions.
 

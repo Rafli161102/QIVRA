@@ -5,10 +5,18 @@ on:
     branches: [main, develop, "feat/**"]
     paths:
       - "engine/analyzer/**"
+      - "engine/analyzer-java/**"
+      - "docs/ANALYZER.md"
+      - "docs/OSS_INTEGRATION.md"
+      - "scripts/check_hybrid_inventory.py"
       - ".github/workflows/analyzer-check.yml"
   pull_request:
     paths:
       - "engine/analyzer/**"
+      - "engine/analyzer-java/**"
+      - "docs/ANALYZER.md"
+      - "docs/OSS_INTEGRATION.md"
+      - "scripts/check_hybrid_inventory.py"
       - ".github/workflows/analyzer-check.yml"
   workflow_dispatch:
 
@@ -16,17 +24,40 @@ permissions:
   contents: read
 
 jobs:
-  test:
+  python-analyzer:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-      - name: Run analyzer unit tests
+      - name: Run Python analyzer tests
         working-directory: engine/analyzer
         run: python -m unittest discover -s tests -v
-      - name: Verify CLI JSON output
+      - name: Verify Python inventory against fixtures
         run: |
-          python -m engine.analyzer.qivra_analyzer engine/analyzer/fixtures --pretty > /tmp/qivra-inventory.json
-          python -c "import json; d=json.load(open('/tmp/qivra-inventory.json')); assert d['schema_version'] == '1.0.0'; assert d['summary']['project_count'] >= 2"
+          python -m engine.analyzer.qivra_analyzer engine/analyzer/fixtures --pretty > /tmp/qivra-python-inventory.json
+          python -c "import json; d=json.load(open('/tmp/qivra-python-inventory.json')); assert d['schema_version'] == '1.0.0'; assert d['summary']['project_count'] >= 2"
+
+  hybrid-analyzer:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: "21"
+          cache: maven
+          cache-dependency-path: engine/analyzer-java/pom.xml
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Compile hybrid analyzer
+        run: mvn --batch-mode --no-transfer-progress -f engine/analyzer-java/pom.xml verify
+      - name: Analyze committed fixtures
+        run: |
+          mvn -q -f engine/analyzer-java/pom.xml org.codehaus.mojo:exec-maven-plugin:3.5.0:java \
+            -Dexec.mainClass=dev.qivra.analyzer.HybridAnalyzer \
+            -Dexec.args="engine/analyzer/fixtures --pretty" > /tmp/qivra-hybrid-inventory.json
+      - name: Validate combined parser output
+        run: python scripts/check_hybrid_inventory.py /tmp/qivra-hybrid-inventory.json
