@@ -58,7 +58,7 @@ npm run dev
 
 Run type checks and the production build with `npm run typecheck` and `npm run build`. For browser verification, build first, install Chromium using `npx playwright install chromium`, then run `npm run test:e2e`.
 
-Run the Python metadata inventory with Python 3.10+: `python -m engine.analyzer.qivra_analyzer ./path/to/repository --pretty`. For the combined Java AST + Gradle/POM syntax inventory, use the Java 21 module described in [engine/analyzer-java/README.md](engine/analyzer-java/README.md). Both modes are local and static; they do not execute project build scripts. See [docs/ANALYZER.md](docs/ANALYZER.md) and [docs/OSS_INTEGRATION.md](docs/OSS_INTEGRATION.md).
+Run the Python metadata inventory with Python 3.10+: `python -m engine.analyzer.qivra_analyzer ./path/to/repository --pretty`. For the combined Java AST + Gradle/POM syntax inventory, use the Java 21 module described in [engine/analyzer-java/README.md](engine/analyzer-java/README.md). The hybrid inventory uses schema 1.3.0 and includes a provenance-labelled graph for Java imports and Maven module/dependency relationships, with unresolved and ambiguous links kept explicit. Both modes are local and static; they do not execute project build scripts. See [docs/ANALYZER.md](docs/ANALYZER.md) and [docs/OSS_INTEGRATION.md](docs/OSS_INTEGRATION.md).
 
 The website includes production SEO metadata, a production-only sitemap, non-indexable preview robots behavior, and baseline response security headers. See [docs/WEBSITE.md](docs/WEBSITE.md) and [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md) for implementation and Vercel setup.
 

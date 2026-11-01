@@ -52,6 +52,19 @@
           <mainClass>dev.qivra.analyzer.HybridAnalyzer</mainClass>
           <classpathScope>runtime</classpathScope>
         </configuration>
+        <executions>
+          <execution>
+            <id>dependency-graph-regression-tests</id>
+            <phase>test</phase>
+            <goals>
+              <goal>java</goal>
+            </goals>
+            <configuration>
+              <mainClass>dev.qivra.analyzer.DependencyGraphTest</mainClass>
+              <classpathScope>test</classpathScope>
+            </configuration>
+          </execution>
+        </executions>
       </plugin>
     </plugins>
   </build>

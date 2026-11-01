@@ -39,6 +39,7 @@ mvn -q -f engine/analyzer-java/pom.xml org.codehaus.mojo:exec-maven-plugin:3.5.0
 - Gradle version catalogs: literal versions, library/plugin aliases, bundles, and version references.
 - Maven POM XML syntax parsing plus partial static model: local relative parent, inherited properties and dependencyManagement, dependency version provenance, BOM import inventory, plugins, modules, and profile activation metadata.
 - Deterministic snapshot digest, file-count and per-file-size limits, and evidence-backed diagnostics.
+- Provenance-labelled graph nodes and edges for Java type declarations/imports and Maven parent, dependency, and aggregator-module relationships. Unresolved and ambiguous targets stay explicit.
 
 ## Safety boundary
 

@@ -7,7 +7,7 @@ def main():
     data = json.loads(Path(sys.argv[1]).read_text(encoding="utf-8"))
     summary = data["summary"]
 
-    assert data["schema_version"] == "1.2.0", "unexpected hybrid inventory schema"
+    assert data["schema_version"] == "1.3.0", "unexpected hybrid inventory schema"
     assert summary["java_files"] >= 3, "Java fixture files were not discovered"
     assert summary["parsed_java_files"] >= 2, "Java fixtures did not parse"
     assert summary["java_type_declarations"] >= 3, "Java type declarations were not extracted"
@@ -39,6 +39,23 @@ def main():
     assert model["dependencies"][0]["version_source"] == "workspace_dependency_management", \
         "Maven inherited dependency version provenance missing"
     assert model["profiles"][0]["activated"] is False, "Maven profile must not be activated during static analysis"
+
+    graph = data["dependency_graph"]
+    graph_summary = graph["summary"]
+    assert graph["schema_version"] == "1.0.0", "unexpected dependency graph schema"
+    assert graph_summary["node_count"] == len(graph["nodes"]), "dependency graph node count mismatch"
+    assert graph_summary["edge_count"] == len(graph["edges"]), "dependency graph edge count mismatch"
+    assert graph_summary["java_import_edges"] >= 1, "Java import graph edges were not generated"
+    assert graph_summary["maven_dependency_edges"] >= 1, "Maven dependency graph edges were not generated"
+    node_ids = {node["id"] for node in graph["nodes"]}
+    edge_ids = [edge["id"] for edge in graph["edges"]]
+    assert len(node_ids) == len(graph["nodes"]), "dependency graph node IDs must be unique"
+    assert len(set(edge_ids)) == len(edge_ids), "dependency graph edge IDs must be unique"
+    for edge in graph["edges"]:
+        assert edge["from"] in node_ids and edge["to"] in node_ids, "dependency graph edge references a missing node"
+        assert edge["evidence"]["file"], "dependency graph edge is missing source-file evidence"
+    assert summary["dependency_graph_nodes"] == graph_summary["node_count"], "summary graph node count mismatch"
+    assert summary["dependency_graph_edges"] == graph_summary["edge_count"], "summary graph edge count mismatch"
 
     print("Hybrid analyzer output validation passed.")
 
