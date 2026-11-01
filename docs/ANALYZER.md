@@ -22,7 +22,7 @@ The Python output uses schema version 1.0.0 at engine/analyzer/schema/inventory.
 
 See [engine/analyzer-java/README.md](../engine/analyzer-java/README.md) for build and run instructions.
 
-The hybrid output uses schema version 1.5.0 at engine/analyzer-java/schema/hybrid-inventory.schema.json. It includes Java AST declarations, Gradle syntax, Gradle version catalogs, and a partial static Maven model.
+The hybrid output uses schema version 1.6.0 at engine/analyzer-java/schema/hybrid-inventory.schema.json. It includes Java AST declarations, Gradle syntax, Gradle version catalogs, and a partial static Maven model.
 
 ## Maven model boundaries
 
@@ -53,7 +53,7 @@ A parsed build file does not prove that Maven or Gradle can configure or build t
 
 ## Validation
 
-CI runs Python unit tests and fixtures, compiles the Java 21 module, parses Java/Gradle/POM/TOML fixtures, and validates version-catalog references, local Maven parent inheritance, dependency version provenance, BOM declarations, and non-activation of Maven profiles.
+CI runs Python unit tests and fixtures, compiles the Java 21 module, parses Java/Gradle/POM/TOML fixtures, validates version-catalog references and bundles, local Maven parent inheritance, dependency version provenance, BOM declarations, and non-activation of Maven profiles. It also analyzes pinned external configuration/source snapshots from Spring Boot, Gradle, Apache Maven, and Commons Lang; no upstream build is executed.
 
 ## Known limitations
 

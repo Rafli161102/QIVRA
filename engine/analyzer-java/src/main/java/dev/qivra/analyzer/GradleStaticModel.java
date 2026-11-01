@@ -52,6 +52,16 @@ final class GradleStaticModel {
                 index.put("libs.plugins." + normalizeAccessor(alias), item);
                 index.put("libs.plugins." + alias, item);
             }
+            for (Map<String, Object> bundle : maps(buildFile.get("bundles"))) {
+                String alias = string(bundle.get("alias"));
+                if (blank(alias)) {
+                    continue;
+                }
+                Map<String, Object> item = new LinkedHashMap<>(bundle);
+                item.put("catalog_kind", "bundle");
+                index.put("libs.bundles." + normalizeAccessor(alias), item);
+                index.put("libs.bundles." + alias, item);
+            }
         }
         return index;
     }
@@ -148,9 +158,34 @@ final class GradleStaticModel {
             }
             Call call = call(tokens, index);
             if (call == null) {
-                if (index + 1 < tokens.size() && tokens.get(index + 1).kind == Kind.STRING) {
-                    addInclude(tokens.get(index + 1), path, output, unresolved, includedBuild);
+                int cursor = index + 1;
+                boolean found = false;
+                List<Token> computed = new ArrayList<>();
+                while (cursor < tokens.size() && tokens.get(cursor).line == token.line
+                        && !symbol(tokens, cursor, ";")) {
+                    Token argument = tokens.get(cursor);
+                    if (argument.kind == Kind.STRING) {
+                        found = true;
+                        if (argument.interpolated) {
+                            unresolved.add(unresolved(
+                                    includedBuild ? "computed_include_build" : "computed_project_include",
+                                    argument.text, path, argument.line
+                            ));
+                        } else {
+                            addInclude(argument, path, output, unresolved, includedBuild);
+                        }
+                    } else if (!symbol(tokens, cursor, ",")) {
+                        computed.add(argument);
+                    }
+                    cursor++;
                 }
+                if (!found && !computed.isEmpty()) {
+                    unresolved.add(unresolved(
+                            includedBuild ? "computed_include_build" : "computed_project_include",
+                            expression(computed), path, token.line
+                    ));
+                }
+                index = Math.max(index, cursor - 1);
                 continue;
             }
             for (List<Token> argument : call.arguments) {
@@ -259,10 +294,24 @@ final class GradleStaticModel {
                     continue;
                 }
                 Call call = call(tokens, index);
-                if (call == null || call.arguments.isEmpty()) {
+                List<Token> argument;
+                int after;
+                if (call != null && !call.arguments.isEmpty()) {
+                    argument = call.arguments.get(0);
+                    after = call.closeIndex;
+                } else if ("id".equals(token.text) && index + 1 < block.end
+                        && tokens.get(index + 1).kind == Kind.STRING) {
+                    // Groovy DSL: id "plugin.id" version "1.2.3"
+                    argument = List.of(tokens.get(index + 1));
+                    after = index + 1;
+                } else if ("alias".equals(token.text) && index + 1 < block.end) {
+                    // Groovy DSL: alias libs.plugins.some-plugin
+                    int end = expressionEnd(tokens, index + 1);
+                    argument = new ArrayList<>(tokens.subList(index + 1, Math.min(end, block.end)));
+                    after = Math.min(end, block.end) - 1;
+                } else {
                     continue;
                 }
-                List<Token> argument = call.arguments.get(0);
                 Map<String, Object> item = new LinkedHashMap<>();
                 item.put("evidence", evidence(path, token.line));
                 if ("id".equals(token.text)) {
@@ -274,7 +323,7 @@ final class GradleStaticModel {
                         unresolved.add(unresolved("computed_plugin_id", expression(argument), path, token.line));
                     } else {
                         item.put("plugin_id", literal.text);
-                        Token version = followingVersion(tokens, call.closeIndex, block.end);
+                        Token version = followingVersion(tokens, after, block.end);
                         item.put("version", version == null ? null : version.text);
                         item.put("resolution", version != null && version.interpolated
                                 ? "dynamic_version" : "literal_plugin_id");
@@ -283,14 +332,14 @@ final class GradleStaticModel {
                         }
                     }
                 } else {
-                    String expression = expressionPath(argument);
-                    Map<String, Object> catalog = catalogAliases.get(expression);
-                    item.put("catalog_expression", expression);
+                    String catalogExpression = expressionPath(argument);
+                    Map<String, Object> catalog = catalogAliases.get(catalogExpression);
+                    item.put("catalog_expression", catalogExpression);
                     if (catalog == null || !"plugin".equals(catalog.get("catalog_kind"))) {
                         item.put("plugin_id", null);
                         item.put("version", null);
                         item.put("resolution", "catalog_alias_unresolved");
-                        unresolved.add(unresolved("unresolved_plugin_catalog_alias", expression, path, token.line));
+                        unresolved.add(unresolved("unresolved_plugin_catalog_alias", catalogExpression, path, token.line));
                     } else {
                         item.put("plugin_id", catalog.get("id"));
                         item.put("version", catalog.get("version"));
@@ -299,7 +348,7 @@ final class GradleStaticModel {
                     }
                 }
                 output.add(item);
-                index = Math.max(index, call.closeIndex);
+                index = Math.max(index, after);
             }
         }
 
@@ -382,8 +431,17 @@ final class GradleStaticModel {
                     argument = call.arguments.get(0);
                     endIndex = call.closeIndex;
                 } else if (index + 1 < block.end && tokens.get(index + 1).kind == Kind.STRING) {
+                    // Groovy DSL: implementation "group:artifact:version"
                     argument = List.of(tokens.get(index + 1));
                     endIndex = index + 1;
+                } else if (index + 1 < block.end) {
+                    // Groovy DSL: implementation project(":module") / implementation libs.alias
+                    int end = expressionEnd(tokens, index + 1);
+                    if (end <= index + 1) {
+                        continue;
+                    }
+                    argument = new ArrayList<>(tokens.subList(index + 1, Math.min(end, block.end)));
+                    endIndex = Math.min(end, block.end) - 1;
                 } else {
                     continue;
                 }
@@ -473,6 +531,20 @@ final class GradleStaticModel {
             if (!Boolean.TRUE.equals(catalog.get("version_resolved"))) {
                 unresolved.add(unresolved("version_catalog_alias_without_version",
                         catalogExpression, path, line));
+            }
+            return item;
+        }
+
+        if (catalog != null && "bundle".equals(catalog.get("catalog_kind"))) {
+            List<?> members = catalog.get("members") instanceof List<?> values ? values : List.of();
+            item.put("dependency_kind", "version_catalog_bundle");
+            item.put("catalog_expression", catalogExpression);
+            item.put("catalog_alias", catalog.get("alias"));
+            item.put("bundle_members", members);
+            item.put("resolution", members.isEmpty()
+                    ? "version_catalog_bundle_empty" : "version_catalog_bundle_resolved");
+            if (members.isEmpty()) {
+                unresolved.add(unresolved("empty_version_catalog_bundle", catalogExpression, path, line));
             }
             return item;
         }
@@ -723,41 +795,34 @@ final class GradleStaticModel {
     }
 
     static boolean isConventionPluginFile(String path) {
-        boolean gradleScript = path.endsWith(".gradle") || path.endsWith(".gradle.kts");
-        return gradleScript && (path.startsWith("buildSrc/src/main/groovy/")
-                || path.startsWith("buildSrc/src/main/kotlin/")
-                || path.startsWith("build-logic/src/main/groovy/")
-                || path.startsWith("build-logic/src/main/kotlin/")
-                || path.contains("/buildSrc/src/main/groovy/")
-                || path.contains("/buildSrc/src/main/kotlin/")
-                || path.contains("/build-logic/src/main/groovy/")
-                || path.contains("/build-logic/src/main/kotlin/"));
+        String normalized = path.replace('\\', '/');
+        boolean gradleScript = normalized.endsWith(".gradle") || normalized.endsWith(".gradle.kts");
+        boolean buildLogicPath = false;
+        for (String segment : normalized.split("/")) {
+            if ("buildSrc".equals(segment) || segment.startsWith("build-logic")) {
+                buildLogicPath = true;
+                break;
+            }
+        }
+        boolean precompiledSourceSet = normalized.contains("/src/main/groovy/")
+                || normalized.contains("/src/main/kotlin/")
+                || normalized.startsWith("src/main/groovy/")
+                || normalized.startsWith("src/main/kotlin/");
+        return gradleScript && buildLogicPath && precompiledSourceSet;
     }
 
     private static String conventionPluginId(String path) {
         String normalized = path.replace('\\', '/');
-        String[] markers = {
-                "/buildSrc/src/main/groovy/", "/buildSrc/src/main/kotlin/",
-                "/build-logic/src/main/groovy/", "/build-logic/src/main/kotlin/"
-        };
         String relative = normalized;
+        String[] markers = {
+                "/src/main/groovy/", "/src/main/kotlin/",
+                "src/main/groovy/", "src/main/kotlin/"
+        };
         for (String marker : markers) {
             int position = normalized.indexOf(marker);
             if (position >= 0) {
                 relative = normalized.substring(position + marker.length());
                 break;
-            }
-        }
-        if (relative.equals(normalized)) {
-            String[] rootMarkers = {
-                    "buildSrc/src/main/groovy/", "buildSrc/src/main/kotlin/",
-                    "build-logic/src/main/groovy/", "build-logic/src/main/kotlin/"
-            };
-            for (String marker : rootMarkers) {
-                if (normalized.startsWith(marker)) {
-                    relative = normalized.substring(marker.length());
-                    break;
-                }
             }
         }
         if (relative.endsWith(".gradle.kts")) {

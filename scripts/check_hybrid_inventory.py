@@ -7,7 +7,7 @@ def main():
     data = json.loads(Path(sys.argv[1]).read_text(encoding="utf-8"))
     summary = data["summary"]
 
-    assert data["schema_version"] == "1.5.0", "unexpected hybrid inventory schema"
+    assert data["schema_version"] == "1.6.0", "unexpected hybrid inventory schema"
     assert summary["java_files"] >= 3, "Java fixture files were not discovered"
     assert summary["parsed_java_files"] >= 2, "Java fixtures did not parse"
     assert summary["java_type_declarations"] >= 3, "Java type declarations were not extracted"
@@ -83,6 +83,112 @@ def main():
         assert edge["evidence"]["file"], "dependency graph edge is missing source-file evidence"
     assert summary["dependency_graph_nodes"] == graph_summary["node_count"], "summary graph node count mismatch"
     assert summary["dependency_graph_edges"] == graph_summary["edge_count"], "summary graph edge count mismatch"
+
+    # Pinned external repository snapshots. These are selected inputs, not full upstream clones.
+    builds = {item["path"]: item for item in data["build_files"]}
+    sources = {item["path"]: item for item in data["java_sources"]}
+
+    spring_settings = next(item for path, item in builds.items()
+                           if path.endswith("external-validation/spring-boot/settings.gradle"))
+    assert spring_settings["parsed"] is True, "Spring Boot Groovy settings did not parse"
+    assert spring_settings["static_model"]["root_project_name"] == "spring-boot-build", \
+        "Spring Boot root project name was not extracted"
+    assert spring_settings["static_model"]["counts"]["included_builds"] >= 1, \
+        "Spring Boot included build was not extracted"
+    assert len(spring_settings["static_model"]["included_projects"]) >= 2, \
+        "Spring Boot literal project includes were not extracted"
+
+    spring_build = next(item for path, item in builds.items()
+                        if path.endswith("external-validation/spring-boot/build.gradle"))
+    assert spring_build["parsed"] is True, "Spring Boot Groovy build script did not parse"
+    assert any(plugin.get("plugin_id") == "base" for plugin in spring_build["static_model"]["plugins"]), \
+        "Groovy no-parentheses plugin ID from Spring Boot was not extracted"
+
+    gradle_root_settings = next(item for path, item in builds.items()
+                                if path.endswith("external-validation/gradle/gradle-root/settings.gradle.kts"))
+    assert gradle_root_settings["parsed"] is True, "Gradle repository Kotlin settings did not parse"
+    assert gradle_root_settings["static_model"]["counts"]["included_builds"] >= 1, \
+        "Gradle repository included build was not extracted"
+
+    gradle_root_build = next(item for path, item in builds.items()
+                             if path.endswith("external-validation/gradle/gradle-root/build.gradle.kts"))
+    assert gradle_root_build["parsed"] is True, "Gradle repository root build script did not parse"
+    assert any(plugin.get("plugin_id") == "gradlebuild.root-build"
+               for plugin in gradle_root_build["static_model"]["plugins"]), \
+        "Gradle repository root plugin declaration was not extracted"
+
+    convention_script = next(item for path, item in builds.items()
+                             if path.endswith("gradlebuild.repositories.gradle.kts"))
+    candidates = convention_script["static_model"]["convention_plugin_candidates"]
+    assert candidates and candidates[0]["plugin_id_candidate"] == "gradlebuild.repositories", \
+        "build-logic-commons convention plugin candidate was not recognized"
+
+    catalog = next(item for path, item in builds.items()
+                   if path.endswith("gradle/catalog-sample/common/gradle/libs.versions.toml"))
+    assert any(item.get("alias") == "groovy-core" for item in catalog["libraries"]), \
+        "Gradle upstream version-catalog library was not parsed"
+    assert any(item.get("alias") == "versions" and item.get("id") == "com.github.ben-manes.versions"
+               for item in catalog["plugins"]), "Gradle upstream version-catalog plugin was not parsed"
+
+    kotlin_sample = next(item for path, item in builds.items()
+                         if path.endswith("gradle/catalog-sample/kotlin/build.gradle.kts"))
+    assert kotlin_sample["parsed"] is True, "Gradle upstream Kotlin catalog sample did not parse"
+    assert any(plugin.get("resolution") == "version_catalog_alias"
+               and plugin.get("plugin_id") == "com.github.ben-manes.versions"
+               for plugin in kotlin_sample["static_model"]["plugins"]), \
+        "Gradle Kotlin plugin alias did not link to upstream catalog"
+    assert any(dependency.get("resolution") == "version_catalog_bundle_resolved"
+               and dependency.get("catalog_alias") == "groovy"
+               and len(dependency.get("bundle_members", [])) == 3
+               for dependency in kotlin_sample["static_model"]["dependencies"]), \
+        "Gradle Kotlin bundle alias did not link to its three upstream members"
+
+    groovy_sample = next(item for path, item in builds.items()
+                         if path.endswith("gradle/catalog-sample/groovy/build.gradle"))
+    assert groovy_sample["parsed"] is True, "Gradle upstream Groovy catalog sample did not parse"
+    assert any(plugin.get("plugin_id") == "java-library"
+               for plugin in groovy_sample["static_model"]["plugins"]), \
+        "Groovy plugin shorthand did not resolve"
+    assert any(dependency.get("resolution") == "version_catalog_bundle_resolved"
+               for dependency in groovy_sample["static_model"]["dependencies"]), \
+        "Groovy unparenthesized catalog bundle declaration was not extracted"
+
+    maven_root = builds["engine/analyzer/fixtures/external-validation/apache-maven/pom.xml"]["static_model"]
+    assert maven_root["coordinates"]["artifact_id"] == "maven", \
+        "Apache Maven root coordinates were not extracted"
+    assert maven_root["parent"]["resolution"] == "external_unresolved", \
+        "Apache Maven's deliberately external root parent should remain unresolved"
+    maven_api = builds["engine/analyzer/fixtures/external-validation/apache-maven/api/pom.xml"]["static_model"]
+    assert maven_api["parent"]["resolution"] == "workspace_resolved", \
+        "Apache Maven API POM should resolve its local root parent"
+    maven_api_core = builds["engine/analyzer/fixtures/external-validation/apache-maven/api/maven-api-core/pom.xml"]["static_model"]
+    assert maven_api_core["parent"]["resolution"] == "workspace_resolved", \
+        "Apache Maven API core POM should resolve its local API parent"
+    maven_impl_core = builds["engine/analyzer/fixtures/external-validation/apache-maven/impl/maven-core/pom.xml"]["static_model"]
+    assert maven_impl_core["parent"]["resolution"] == "workspace_resolved", \
+        "Apache Maven core POM should resolve its local implementation parent"
+
+    commons = builds["engine/analyzer/fixtures/external-validation/commons-lang/pom.xml"]["static_model"]
+    assert commons["coordinates"]["artifact_id"] == "commons-lang3", \
+        "Commons Lang POM coordinates were not extracted"
+    assert commons["parent"]["resolution"] == "external_unresolved", \
+        "Commons Lang's remote parent should remain unresolved without remote lookup"
+
+    external_java_paths = [
+        path for path in sources
+        if path.endswith("spring-boot/SpringApplication.java")
+        or path.endswith("apache-maven/MavenProject.java")
+        or path.endswith("commons-lang/StringUtils.java")
+    ]
+    assert len(external_java_paths) == 3, "selected external Java source files were not all discovered"
+    assert all(sources[path]["parse_status"] == "valid" for path in external_java_paths), \
+        "one or more external Java source snapshots failed AST parsing"
+    external_api_records = [
+        item for path in external_java_paths for item in sources[path].get("api_references", [])
+    ]
+    assert external_api_records, "external Java source API references were not inventoried"
+    assert all(item["evidence"]["file"] and item["evidence"]["line"] > 0
+               for item in external_api_records), "external Java API references lost source evidence"
 
     print("Hybrid analyzer output validation passed.")
 
