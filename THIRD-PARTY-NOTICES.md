@@ -41,8 +41,8 @@ Consult the package manifests for exact direct versions. The transitive dependen
 
 - Project: https://github.com/javaparser/javaparser
 - Source release: javaparser-parent-3.28.2
-- Artifact: com.github.javaparser:javaparser-core:3.28.2
-- Purpose: Java AST inventory and source location extraction.
+- Artifacts: com.github.javaparser:javaparser-core:3.28.2 and com.github.javaparser:javaparser-symbol-solver-core:3.28.2
+- Purpose: Java AST inventory, source location extraction, and best-effort workspace/JDK method identity resolution.
 - Licensing: JavaParser offers Apache-2.0 and LGPL-3.0 options. QIVRA selects Apache-2.0 for the pinned artifact; see LICENSES/JAVAPARSER-APACHE-2.0.txt.
 - No JavaParser source files are copied into QIVRA.
 

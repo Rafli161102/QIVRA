@@ -19,6 +19,11 @@
       <version>3.28.2</version>
     </dependency>
     <dependency>
+      <groupId>com.github.javaparser</groupId>
+      <artifactId>javaparser-symbol-solver-core</artifactId>
+      <version>3.28.2</version>
+    </dependency>
+    <dependency>
       <groupId>org.openrewrite</groupId>
       <artifactId>rewrite-gradle</artifactId>
       <version>8.90.4</version>
@@ -61,6 +66,17 @@
             </goals>
             <configuration>
               <mainClass>dev.qivra.analyzer.DependencyGraphTest</mainClass>
+              <classpathScope>test</classpathScope>
+            </configuration>
+          </execution>
+          <execution>
+            <id>java-api-resolution-regression-tests</id>
+            <phase>test</phase>
+            <goals>
+              <goal>java</goal>
+            </goals>
+            <configuration>
+              <mainClass>dev.qivra.analyzer.JavaApiIntelligenceTest</mainClass>
               <classpathScope>test</classpathScope>
             </configuration>
           </execution>
