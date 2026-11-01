@@ -1,43 +1,56 @@
-# Static repository analyzer
+# QIVRA static and hybrid repository analyzer
 
-## Scope
+P0.2 has two complementary local analysis paths:
 
-P0.2 starts with a local, read-only inventory of Maven and Gradle build metadata. The implementation lives in `engine/analyzer` and uses Python 3.10+ with no runtime third-party dependencies.
+- Python scanner: lightweight metadata discovery using Python 3.10+ standard library.
+- Java hybrid parser: Java 21 module using JavaParser for Java AST inventory and OpenRewrite parsers for Gradle Groovy/Kotlin and Maven POM XML.
 
-The analyzer does not execute build tools, Gradle scripts, Maven plugins, or project code. This is a deliberate trust boundary: build metadata is parsed as data only.
+Neither path executes customer build scripts or application code.
 
-## Output contract
+## Python metadata scanner
 
-The CLI emits JSON with:
-- `schema_version` for consumer compatibility;
-- analyzer identity and version;
-- a SHA-256 digest of discovered build-file paths and contents;
-- project/module declarations, Java settings, dependency/plugin declarations, and evidence file paths;
-- diagnostics for malformed or unsupported project layouts.
-
-The JSON Schema is maintained in [engine/analyzer/schema/inventory.schema.json](../engine/analyzer/schema/inventory.schema.json). Breaking output changes require a schema version change and migration notes.
-
-## Run locally
-
-```bash
+~~~bash
 python -m engine.analyzer.qivra_analyzer ./repository --pretty
 python -m engine.analyzer.qivra_analyzer ./repository --output inventory.json
 cd engine/analyzer && python -m unittest discover -s tests -v
-```
+~~~
+
+The Python output uses schema version 1.0.0 at engine/analyzer/schema/inventory.schema.json. It discovers Maven/Gradle build files, modules, literal dependency/plugin declarations, and initial Java build settings.
+
+## Java hybrid parser
+
+See [engine/analyzer-java/README.md](../engine/analyzer-java/README.md) for build and run instructions.
+
+The hybrid output uses schema version 1.1.0 at engine/analyzer-java/schema/hybrid-inventory.schema.json. It adds:
+- Java package and import declarations;
+- type declarations (classes, interfaces, enums, annotations, records);
+- method declarations and method-call-name counts;
+- source line evidence and initial language-feature signals;
+- syntax parsing for Gradle Groovy/Kotlin files and Maven POM XML.
 
 ## Evidence and interpretation
 
-Project entries cite the build files from which declarations were read. Diagnostics cite the malformed file when one exists. Missing Java configuration is represented as an empty Java settings object; it must not be interpreted as a specific runtime version.
+Every Java source record names its repository-relative path and uses source line numbers when the AST provides them. Build parser results also carry repository-relative evidence paths. Parse errors include the source file path.
 
-The output is a static declaration inventory. It is not an effective Maven model, resolved Gradle model, dependency graph, security scan, Java API compatibility assessment, or migration recommendation.
+An empty Java settings object in the Python inventory is not a specific Java runtime version. A Java AST parse success proves syntax acceptance at the configured parser language level, not successful compilation, API compatibility, dependency resolution, runtime behavior, or migration safety.
+
+## Safety boundary
+
+- Build files are treated as untrusted text.
+- No Maven or Gradle executable, wrapper, plugin, lifecycle goal, build task, customer test, or customer application code is invoked.
+- The hybrid POM pass uses OpenRewrite XML parsing only; it does not resolve Maven parents, profiles, BOMs, or transitive dependencies.
+- The hybrid Gradle pass parses script syntax only; it does not create an effective Gradle model.
+- The Java parser builds ASTs but does not resolve symbols or compile source files.
+- The Java hybrid scan has file-count and per-file size limits and skips symlinks and common generated/dependency directories.
+
+## Known limitations
+
+- Gradle expressions, version catalogs, variables, convention plugins, and computed dependency coordinates are not resolved.
+- Maven parent inheritance, active profiles, BOMs, mediation, and effective POM behavior are not calculated.
+- Method-call names are not resolved to concrete API symbols.
+- Framework, runtime reachability, test coverage, and semantic compatibility are not inferred.
+- Inventory results are not modernization recommendations; P0.3 adds target-profile assessment and explicit uncertainty handling.
 
 ## Validation
 
-Fixtures cover Maven multi-module projects, nested Maven modules, Gradle Kotlin DSL settings and toolchains, and malformed Maven XML. CI runs unit tests and validates that the fixture corpus produces a schema-versioned inventory.
-
-## Next increments
-
-1. Improve Gradle settings/project-directory mapping and version catalog evidence.
-2. Add Maven parent/property interpolation and profile-aware diagnostics without resolving dependencies.
-3. Add Java source-level language/API signals with file/line evidence.
-4. Expand fixtures from representative public projects after license and provenance review.
+CI runs Python unit tests and fixture inventory checks, then compiles the Java hybrid module, parses representative Java/Gradle/POM fixtures, and validates the combined JSON summary. P0.2 remains in progress until broader fixture coverage and representative repository validation are complete.
