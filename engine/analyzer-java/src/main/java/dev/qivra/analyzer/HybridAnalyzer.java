@@ -464,7 +464,7 @@ public final class HybridAnalyzer {
     }
 
     private static boolean isConventionPluginFile(Path path) {
-        return GradleStaticModel.isConventionPluginFile(path.toString().replace('\\\\', '/'));
+        return GradleStaticModel.isConventionPluginFile(path.toString().replace('\\', '/'));
     }
 
     private static boolean isIgnored(Path root, Path file) {
