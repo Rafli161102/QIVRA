@@ -109,5 +109,60 @@ dependencies {
             self.assertFalse(marker.exists())
 
 
+    def test_maven_local_parent_inheritance_bom_and_profile_inventory(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            self.write(root, "pom.xml", """<project>
+              <modelVersion>4.0.0</modelVersion>
+              <groupId>org.qivra</groupId><artifactId>root-parent</artifactId><version>1.0.0</version>
+              <properties>
+                <maven.compiler.release>17</maven.compiler.release>
+                <shared.version>2.5.0</shared.version>
+              </properties>
+              <dependencyManagement><dependencies>
+                <dependency><groupId>org.example</groupId><artifactId>shared</artifactId><version>${shared.version}</version></dependency>
+                <dependency><groupId>org.example</groupId><artifactId>example-bom</artifactId><version>1.2.3</version><type>pom</type><scope>import</scope></dependency>
+              </dependencies></dependencyManagement>
+              <profiles><profile><id>java21</id><activation><jdk>[21,)</jdk></activation>
+                <properties><maven.compiler.release>21</maven.compiler.release></properties>
+              </profile></profiles>
+            </project>""")
+            self.write(root, "app/pom.xml", """<project>
+              <modelVersion>4.0.0</modelVersion>
+              <parent><groupId>org.qivra</groupId><artifactId>root-parent</artifactId><version>1.0.0</version><relativePath>../pom.xml</relativePath></parent>
+              <artifactId>app</artifactId>
+              <dependencies><dependency><groupId>org.example</groupId><artifactId>shared</artifactId><version>${shared.version}</version></dependency></dependencies>
+            </project>""")
+
+            result = analyze(root)
+            parent = next(project for project in result["projects"] if project["path"] == ".")
+            child = next(project for project in result["projects"] if project["path"] == "app")
+
+            self.assertEqual(child["parent"]["artifact"], "root-parent")
+            self.assertEqual(child["parent_inheritance"]["resolution"], "resolved-local")
+            self.assertEqual(
+                child["parent_inheritance"]["inherited_properties"]["shared.version"],
+                "2.5.0",
+            )
+            self.assertEqual(child["java"]["release"], "17")
+            self.assertEqual(child["dependencies"][0]["version"], "2.5.0")
+            self.assertEqual(parent["bom_imports"][0]["artifact"], "example-bom")
+            self.assertEqual(parent["profiles"][0]["id"], "java21")
+            self.assertEqual(parent["profiles"][0]["activation"]["jdk"], "[21,)")
+            self.assertEqual(parent["java"]["release"], "17")
+
+    def test_maven_external_parent_is_reported_without_network_resolution(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            self.write(root, "app/pom.xml", """<project>
+              <parent><groupId>org.external</groupId><artifactId>parent</artifactId><version>9.0</version></parent>
+              <artifactId>app</artifactId>
+            </project>""")
+            result = analyze(root)
+            project = result["projects"][0]
+            self.assertEqual(project["parent_inheritance"]["resolution"], "not-found-locally")
+            self.assertTrue(any(item["code"] == "MAVEN_PARENT_NOT_FOUND_LOCALLY" for item in result["diagnostics"]))
+            self.assertEqual(project["parent"]["group"], "org.external")
+
 if __name__ == "__main__":
     unittest.main()

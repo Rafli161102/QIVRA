@@ -1,0 +1,10 @@
+[versions]
+spring = "6.1.8"
+slf4j = "2.0.9"
+
+[libraries]
+spring-core = { module = "org.springframework:spring-core", version.ref = "spring" }
+slf4j-api = { group = "org.slf4j", name = "slf4j-api", version.ref = "slf4j" }
+
+[plugins]
+spring-boot = { id = "org.springframework.boot", version = "3.3.0" }
