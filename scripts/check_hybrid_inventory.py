@@ -159,22 +159,22 @@ def main():
                for dependency in groovy_sample["static_model"]["dependencies"]), \
         "Groovy unparenthesized catalog bundle declaration was not extracted"
 
-    maven_root = builds["engine/analyzer/fixtures/external-validation/apache-maven/pom.xml"]["static_model"]
+    maven_root = next(item for path, item in builds.items() if path.endswith("external-validation/apache-maven/pom.xml"))["static_model"]
     assert maven_root["coordinates"]["artifact_id"] == "maven", \
         "Apache Maven root coordinates were not extracted"
     assert maven_root["parent"]["resolution"] == "external_unresolved", \
         "Apache Maven's deliberately external root parent should remain unresolved"
-    maven_api = builds["engine/analyzer/fixtures/external-validation/apache-maven/api/pom.xml"]["static_model"]
+    maven_api = next(item for path, item in builds.items() if path.endswith("external-validation/apache-maven/api/pom.xml"))["static_model"]
     assert maven_api["parent"]["resolution"] == "workspace_resolved", \
         "Apache Maven API POM should resolve its local root parent"
-    maven_api_core = builds["engine/analyzer/fixtures/external-validation/apache-maven/api/maven-api-core/pom.xml"]["static_model"]
+    maven_api_core = next(item for path, item in builds.items() if path.endswith("external-validation/apache-maven/api/maven-api-core/pom.xml"))["static_model"]
     assert maven_api_core["parent"]["resolution"] == "workspace_resolved", \
         "Apache Maven API core POM should resolve its local API parent"
-    maven_impl_core = builds["engine/analyzer/fixtures/external-validation/apache-maven/impl/maven-core/pom.xml"]["static_model"]
+    maven_impl_core = next(item for path, item in builds.items() if path.endswith("external-validation/apache-maven/impl/maven-core/pom.xml"))["static_model"]
     assert maven_impl_core["parent"]["resolution"] == "workspace_resolved", \
         "Apache Maven core POM should resolve its local implementation parent"
 
-    commons = builds["engine/analyzer/fixtures/external-validation/commons-lang/pom.xml"]["static_model"]
+    commons = next(item for path, item in builds.items() if path.endswith("external-validation/commons-lang/pom.xml"))["static_model"]
     assert commons["coordinates"]["artifact_id"] == "commons-lang3", \
         "Commons Lang POM coordinates were not extracted"
     assert commons["parent"]["resolution"] == "external_unresolved", \
