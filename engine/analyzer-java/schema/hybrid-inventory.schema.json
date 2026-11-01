@@ -2,63 +2,341 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "QIVRA Hybrid Source Inventory",
   "type": "object",
-  "required": ["schema_version", "analyzer", "snapshot", "summary", "java_sources", "build_files", "diagnostics"],
+  "required": [
+    "schema_version",
+    "analyzer",
+    "snapshot",
+    "summary",
+    "java_sources",
+    "build_files",
+    "diagnostics",
+    "dependency_graph"
+  ],
   "properties": {
-    "schema_version": { "const": "1.2.0" },
+    "schema_version": {
+      "const": "1.3.0"
+    },
     "analyzer": {
       "type": "object",
-      "required": ["name", "version", "java_parser", "openrewrite", "toml_parser"],
+      "required": [
+        "name",
+        "version",
+        "java_parser",
+        "openrewrite",
+        "toml_parser"
+      ],
       "properties": {
-        "name": { "type": "string" },
-        "version": { "type": "string" },
-        "java_parser": { "type": "string" },
-        "openrewrite": { "type": "string" },
-        "toml_parser": { "type": "string" }
+        "name": {
+          "type": "string"
+        },
+        "version": {
+          "type": "string"
+        },
+        "java_parser": {
+          "type": "string"
+        },
+        "openrewrite": {
+          "type": "string"
+        },
+        "toml_parser": {
+          "type": "string"
+        }
       },
       "additionalProperties": false
     },
     "snapshot": {
       "type": "object",
-      "required": ["recognized_files_sha256"],
+      "required": [
+        "recognized_files_sha256"
+      ],
       "properties": {
-        "recognized_files_sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" }
+        "recognized_files_sha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        }
       },
       "additionalProperties": false
     },
     "summary": {
       "type": "object",
       "required": [
-        "files_scanned", "java_files", "parsed_java_files", "gradle_files", "parsed_gradle_files",
-        "maven_files", "parsed_maven_files", "gradle_version_catalogs", "parsed_gradle_version_catalogs",
-        "gradle_catalog_libraries", "maven_parent_resolved", "maven_dependency_declarations",
-        "maven_bom_imports", "java_type_declarations", "java_method_declarations",
-        "diagnostics", "file_limit_reached", "skipped_large_files"
+        "files_scanned",
+        "java_files",
+        "parsed_java_files",
+        "gradle_files",
+        "parsed_gradle_files",
+        "maven_files",
+        "parsed_maven_files",
+        "gradle_version_catalogs",
+        "parsed_gradle_version_catalogs",
+        "gradle_catalog_libraries",
+        "maven_parent_resolved",
+        "maven_dependency_declarations",
+        "maven_bom_imports",
+        "java_type_declarations",
+        "java_method_declarations",
+        "diagnostics",
+        "file_limit_reached",
+        "skipped_large_files",
+        "dependency_graph_nodes",
+        "dependency_graph_edges",
+        "dependency_graph_unresolved_edges"
       ],
       "properties": {
-        "files_scanned": { "type": "integer", "minimum": 0 },
-        "java_files": { "type": "integer", "minimum": 0 },
-        "parsed_java_files": { "type": "integer", "minimum": 0 },
-        "gradle_files": { "type": "integer", "minimum": 0 },
-        "parsed_gradle_files": { "type": "integer", "minimum": 0 },
-        "maven_files": { "type": "integer", "minimum": 0 },
-        "parsed_maven_files": { "type": "integer", "minimum": 0 },
-        "gradle_version_catalogs": { "type": "integer", "minimum": 0 },
-        "parsed_gradle_version_catalogs": { "type": "integer", "minimum": 0 },
-        "gradle_catalog_libraries": { "type": "integer", "minimum": 0 },
-        "maven_parent_resolved": { "type": "integer", "minimum": 0 },
-        "maven_dependency_declarations": { "type": "integer", "minimum": 0 },
-        "maven_bom_imports": { "type": "integer", "minimum": 0 },
-        "java_type_declarations": { "type": "integer", "minimum": 0 },
-        "java_method_declarations": { "type": "integer", "minimum": 0 },
-        "diagnostics": { "type": "integer", "minimum": 0 },
-        "file_limit_reached": { "type": "boolean" },
-        "skipped_large_files": { "type": "integer", "minimum": 0 }
+        "files_scanned": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "java_files": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "parsed_java_files": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "gradle_files": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "parsed_gradle_files": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "maven_files": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "parsed_maven_files": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "gradle_version_catalogs": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "parsed_gradle_version_catalogs": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "gradle_catalog_libraries": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "maven_parent_resolved": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "maven_dependency_declarations": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "maven_bom_imports": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "java_type_declarations": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "java_method_declarations": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "diagnostics": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "file_limit_reached": {
+          "type": "boolean"
+        },
+        "skipped_large_files": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "dependency_graph_nodes": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "dependency_graph_edges": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "dependency_graph_unresolved_edges": {
+          "type": "integer",
+          "minimum": 0
+        }
       },
       "additionalProperties": false
     },
-    "java_sources": { "type": "array", "items": { "type": "object" } },
-    "build_files": { "type": "array", "items": { "type": "object" } },
-    "diagnostics": { "type": "array", "items": { "type": "object" } }
+    "java_sources": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "build_files": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "diagnostics": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "dependency_graph": {
+      "type": "object",
+      "required": [
+        "schema_version",
+        "summary",
+        "nodes",
+        "edges"
+      ],
+      "properties": {
+        "schema_version": {
+          "const": "1.0.0"
+        },
+        "summary": {
+          "type": "object",
+          "required": [
+            "node_count",
+            "edge_count",
+            "resolved_edges",
+            "unresolved_edges",
+            "java_import_edges",
+            "maven_dependency_edges",
+            "maven_parent_edges",
+            "maven_aggregate_edges"
+          ],
+          "properties": {
+            "node_count": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "edge_count": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "resolved_edges": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "unresolved_edges": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "java_import_edges": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "maven_dependency_edges": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "maven_parent_edges": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "maven_aggregate_edges": {
+              "type": "integer",
+              "minimum": 0
+            }
+          },
+          "additionalProperties": false
+        },
+        "nodes": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "id",
+              "kind",
+              "label",
+              "data"
+            ],
+            "properties": {
+              "id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "kind": {
+                "type": "string",
+                "minLength": 1
+              },
+              "label": {
+                "type": "string"
+              },
+              "data": {
+                "type": "object"
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "edges": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "id",
+              "kind",
+              "from",
+              "to",
+              "resolution",
+              "evidence",
+              "provenance"
+            ],
+            "properties": {
+              "id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "kind": {
+                "type": "string",
+                "minLength": 1
+              },
+              "from": {
+                "type": "string",
+                "minLength": 1
+              },
+              "to": {
+                "type": "string",
+                "minLength": 1
+              },
+              "resolution": {
+                "type": "string",
+                "minLength": 1
+              },
+              "evidence": {
+                "type": "object",
+                "required": [
+                  "file"
+                ],
+                "properties": {
+                  "file": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "line": {
+                    "type": "integer",
+                    "minimum": 1
+                  }
+                },
+                "additionalProperties": false
+              },
+              "provenance": {
+                "type": "object"
+              }
+            },
+            "additionalProperties": false
+          }
+        }
+      },
+      "additionalProperties": false
+    }
   },
   "additionalProperties": false
 }

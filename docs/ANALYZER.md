@@ -22,7 +22,7 @@ The Python output uses schema version 1.0.0 at engine/analyzer/schema/inventory.
 
 See [engine/analyzer-java/README.md](../engine/analyzer-java/README.md) for build and run instructions.
 
-The hybrid output uses schema version 1.2.0 at engine/analyzer-java/schema/hybrid-inventory.schema.json. It includes Java AST declarations, Gradle syntax, Gradle version catalogs, and a partial static Maven model.
+The hybrid output uses schema version 1.3.0 at engine/analyzer-java/schema/hybrid-inventory.schema.json. It includes Java AST declarations, Gradle syntax, Gradle version catalogs, and a partial static Maven model.
 
 ## Maven model boundaries
 
@@ -37,6 +37,8 @@ The version catalog parser handles literal TOML version strings, library/plugin 
 ## Evidence and interpretation
 
 Every source/build record names its repository-relative path. Maven parent and dependency-management resolutions include provenance. Parse errors and unresolved relationships are explicit diagnostics.
+
+The hybrid inventory also emits a deterministic dependency graph (`dependency_graph`, graph schema 1.0.0). Nodes represent scanned Java source files, declared Java types/packages, Maven projects, and unresolved dependency/import targets. Edges represent Java type declarations/imports and Maven parent, declared dependency, and literal aggregator-module relationships. Every edge retains a repository-relative evidence file; Java import/declaration edges also retain source line numbers. Maven dependency edges retain declaration metadata such as scope, optionality, and version provenance. Workspace resolution is reported only when a unique scanned coordinate/type match exists; missing or duplicate targets remain marked `not_found_*`, `unresolved_*`, or `ambiguous_*` rather than being silently attached to a guessed node.
 
 A parsed build file does not prove that Maven or Gradle can configure or build the project. A resolved local Maven parent does not imply that external BOMs or transitive dependencies are resolved. A Java AST parse does not prove runtime compatibility or migration safety.
 
@@ -58,5 +60,7 @@ CI runs Python unit tests and fixtures, compiles the Java 21 module, parses Java
 - Gradle project-directory mapping, computed declarations, convention plugins, and settings evaluation remain incomplete.
 - Maven remote parents, external BOM imports, profile activation, repositories, effective plugin configuration, and dependency mediation remain incomplete.
 - Java method-call names are not resolved API identities.
+- Java imports are matched only against types/packages found in the scanned source set; `not_found_in_scanned_sources` does not prove that an import is external.
+- Maven workspace dependency matching uses unique groupId/artifactId coordinates from scanned POMs; it does not prove the artifact is selected by Maven mediation or that the project builds.
 - Framework/runtime reachability and semantic compatibility are not inferred.
 - P0.3 adds target-profile assessment and explicit uncertainty handling.

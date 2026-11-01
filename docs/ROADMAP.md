@@ -39,6 +39,7 @@ Deliverables:
 - [ ] Add resolved Java API identity and richer source-level compatibility signals with file and line evidence.
 - [x] Add Java fixtures for legacy classes, records, switch expressions, and malformed Java syntax; run the combined parser in CI.
 - [x] Expand fixtures for Gradle version catalogs, Maven parent inheritance, inherited dependency versions, BOM imports, and unactivated profiles.
+- [x] Add a deterministic provenance-labelled graph for Java imports/declarations and Maven parent, dependency, and aggregator-module relationships, with explicit unresolved/ambiguous states and regression checks.
 - [ ] Validate against representative external repositories and broaden malformed/security fixture coverage.
 
 Acceptance criteria:

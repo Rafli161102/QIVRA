@@ -7,6 +7,8 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 ## [Unreleased]
 
 ### Added
+- Added deterministic dependency-graph output (graph schema 1.0.0) for Java source/type/import and Maven module/parent/dependency relationships, including file/line evidence, declaration provenance, and explicit unresolved/ambiguous states.
+- Added dependency-graph regression checks to the Java analyzer Maven test phase; hybrid inventory schema is now 1.3.0 and analyzer version is 0.4.0.
 - Added Gradle version-catalog TOML inventory for versions, library aliases, plugin aliases, bundles, and literal version references using Tomlj 1.1.1.
 - Added a hardened partial Maven static model for safe workspace-relative parent resolution, inherited properties and dependencyManagement, dependency version provenance, BOM import inventory, plugin declarations, and profile activation metadata.
 - Added eight QIVRA-specific Agent Skills for repository intelligence, build-model analysis, evidence graphs, modernization assessment, safe transformations, AI provider safety, and verification/release workflows.
