@@ -19,10 +19,14 @@ def main():
     assert summary["gradle_projects_declared"] >= 2, "literal Gradle project includes were not extracted"
     assert summary["gradle_dependencies"] >= 1, "literal Gradle dependencies were not extracted"
     assert summary["gradle_unresolved_declarations"] >= 0, "Gradle unresolved expression count missing"
-    gradle_settings = next(item for item in data["build_files"] if item.get("build_system") == "gradle" and item["path"].endswith("settings.gradle.kts"))
+    gradle_settings = next(item for item in data["build_files"]
+                           if item.get("build_system") == "gradle"
+                           and item["path"].endswith("gradle-kotlin/settings.gradle.kts"))
     assert gradle_settings["static_model"]["root_project_name"] == "gradle-kotlin", "Gradle root project name missing"
     assert len(gradle_settings["static_model"]["included_projects"]) >= 2, "Gradle included project paths missing"
-    gradle_build = next(item for item in data["build_files"] if item.get("build_system") == "gradle" and item["path"].endswith("build.gradle.kts"))
+    gradle_build = next(item for item in data["build_files"]
+                        if item.get("build_system") == "gradle"
+                        and item["path"].endswith("gradle-kotlin/build.gradle.kts"))
     gradle_deps = gradle_build["static_model"]["dependencies"]
     assert any(item.get("coordinate") == "org.slf4j:slf4j-api:2.0.9" for item in gradle_deps), "Gradle literal dependency coordinate missing"
     assert any(item.get("resolution") == "version_catalog_alias_resolved" and item.get("version") == "2.0.21" for item in gradle_deps), "Gradle library catalog alias was not linked"
@@ -43,7 +47,9 @@ def main():
     assert any(path.endswith("LegacyService.java") for path in paths), "legacy Java fixture missing"
     assert any(path.endswith("FeatureRecord.java") for path in paths), "record Java fixture missing"
 
-    catalog = next(item for item in data["build_files"] if item["build_system"] == "gradle_version_catalog")
+    catalog = next(item for item in data["build_files"]
+                   if item["build_system"] == "gradle_version_catalog"
+                   and item["path"].endswith("gradle-kotlin/gradle/libs.versions.toml"))
     assert any(item["alias"] == "junit-jupiter" and item["version"] == "5.11.4" for item in catalog["libraries"]), \
         "Gradle version reference was not resolved"
 
