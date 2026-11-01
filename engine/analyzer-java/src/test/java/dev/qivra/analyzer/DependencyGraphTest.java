@@ -58,6 +58,7 @@ public final class DependencyGraphTest {
                 "pom.xml", "org.example", "application", "1.0.0", List.of("core"),
                 List.of(
                         dependency("org.example", "core", "1.0.0"),
+                        dependency("org.example", "core", "9.0.0"),
                         dependency("com.vendor", "remote-client", "2.4.0")
                 )
         );
@@ -74,6 +75,8 @@ public final class DependencyGraphTest {
 
         Map<String, Object> aggregate = edge(graph, "maven_aggregates", "workspace_module_match");
         check(aggregate != null, "literal Maven module declarations should map to scanned child POMs");
+        Map<String, Object> versionMismatch = edge(graph, "maven_dependency", "workspace_version_mismatch");
+        check(versionMismatch != null, "a matching group/artifact with a different version must not resolve to the workspace module");
         Map<String, Object> externalDependency = edge(graph, "maven_dependency", "not_found_in_scanned_workspace");
         check(externalDependency != null, "dependencies absent from the scanned workspace must stay unresolved");
         check("pom.xml".equals(map(externalDependency.get("evidence")).get("file")),

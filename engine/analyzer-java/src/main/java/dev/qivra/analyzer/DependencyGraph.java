@@ -251,6 +251,26 @@ final class DependencyGraph {
         String key = group + ":" + artifact;
         List<String> projects = projectIdsByCoordinate.getOrDefault(key, List.of());
         if (projects.size() == 1) {
+            Map<String, Object> projectData = map(nodes.get(projects.get(0)).get("data"));
+            String projectVersion = string(projectData.get("version"));
+            if (blank(version) || blank(projectVersion)) {
+                String id = stableId("maven-unverified-module", key + ":" + nullToEmpty(version));
+                addNode(nodes, id, "unverified_maven_module", coordinateLabel(group, artifact, version),
+                        Map.of("group_id", group, "artifact_id", artifact,
+                                "dependency_version", nullToEmpty(version),
+                                "workspace_version", nullToEmpty(projectVersion),
+                                "candidate_path", nullToEmpty(string(projectData.get("path")))));
+                return new Target(id, "workspace_version_unverified");
+            }
+            if (!version.equals(projectVersion)) {
+                String id = stableId("maven-version-mismatch", key + ":" + version + ":" + projectVersion);
+                addNode(nodes, id, "maven_version_mismatch_target", coordinateLabel(group, artifact, version),
+                        Map.of("group_id", group, "artifact_id", artifact,
+                                "dependency_version", version,
+                                "workspace_version", projectVersion,
+                                "candidate_path", nullToEmpty(string(projectData.get("path")))));
+                return new Target(id, "workspace_version_mismatch");
+            }
             return new Target(projects.get(0), "workspace_module_match");
         }
         if (projects.size() > 1) {
@@ -394,7 +414,8 @@ final class DependencyGraph {
     private static boolean isUnresolved(String resolution) {
         return resolution != null && (resolution.startsWith("not_found")
                 || resolution.startsWith("ambiguous")
-                || resolution.startsWith("unresolved"));
+                || resolution.startsWith("unresolved")
+                || resolution.startsWith("workspace_version_"));
     }
 
     private static String coordinateLabel(String group, String artifact, String version) {
