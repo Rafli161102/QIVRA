@@ -43,8 +43,8 @@ import static com.github.javaparser.ParseStart.COMPILATION_UNIT;
 import static com.github.javaparser.Providers.provider;
 
 public final class HybridAnalyzer {
-    private static final String VERSION = "0.5.0";
-    private static final String SCHEMA_VERSION = "1.4.0";
+    private static final String VERSION = "0.6.0";
+    private static final String SCHEMA_VERSION = "1.5.0";
     private static final int MAX_FILES = 20_000;
     private static final long MAX_FILE_BYTES = 2_000_000L;
     private static final Set<String> IGNORED_DIRECTORIES = Set.of(
@@ -107,6 +107,18 @@ public final class HybridAnalyzer {
         List<Map<String, Object>> diagnostics = new ArrayList<>();
         int skippedLargeFiles = 0;
 
+        // Parse catalogs first so literal libs.* references can be linked from build scripts.
+        for (Path file : candidates) {
+            if (!isVersionCatalog(file) || Files.size(file) > MAX_FILE_BYTES) {
+                continue;
+            }
+            String catalogPath = relative(root, file);
+            String catalogSource = Files.readString(file, StandardCharsets.UTF_8);
+            buildFiles.add(BuildModelIntelligence.parseVersionCatalog(catalogPath, catalogSource, diagnostics));
+        }
+        Map<String, Map<String, Object>> gradleCatalogAliases =
+                GradleStaticModel.catalogAliasIndex(buildFiles);
+
         for (Path file : candidates) {
             String path = relative(root, file);
             long size = Files.size(file);
@@ -129,13 +141,16 @@ public final class HybridAnalyzer {
             if (path.endsWith(".java")) {
                 javaSources.add(parseJava(javaParser, path, source, diagnostics));
             } else if (isVersionCatalog(file)) {
-                buildFiles.add(BuildModelIntelligence.parseVersionCatalog(path, source, diagnostics));
+                // Parsed in the first pass, before build scripts.
+                continue;
             } else if (isGradleFile(path)) {
-                buildFiles.add(parseGradle(path, source, diagnostics));
+                buildFiles.add(parseGradle(root, path, source, gradleCatalogAliases, diagnostics));
             } else if (path.endsWith("pom.xml")) {
                 buildFiles.add(parsePom(root, path, source, diagnostics));
             }
         }
+
+        buildFiles.sort(Comparator.comparing(item -> String.valueOf(item.get("path"))));
 
         int parsedJavaFiles = (int) javaSources.stream()
                 .filter(item -> "valid".equals(item.get("parse_status")))
@@ -168,6 +183,11 @@ public final class HybridAnalyzer {
         long mavenBomImportCount = buildFiles.stream().filter(item -> "maven".equals(item.get("build_system")))
                 .map(item -> item.get("static_model")).filter(Map.class::isInstance).map(Map.class::cast)
                 .map(item -> item.get("bom_imports")).filter(List.class::isInstance).map(List.class::cast).mapToLong(List::size).sum();
+        long gradleProjectCount = gradleModelCount(buildFiles, "included_projects");
+        long gradleProjectMappingCount = gradleModelCount(buildFiles, "project_directory_mappings");
+        long gradleDependencyCount = gradleModelCount(buildFiles, "dependencies");
+        long gradleUnresolvedCount = gradleModelCount(buildFiles, "unresolved_expressions");
+        long gradleConventionPluginCount = gradleModelCount(buildFiles, "convention_plugin_candidates");
 
         Map<String, Object> javaApiSummary = JavaApiIntelligence.enrich(root, javaSources, diagnostics, MAX_FILE_BYTES);
         Map<String, Object> dependencyGraph = DependencyGraph.build(javaSources, buildFiles);
@@ -184,6 +204,11 @@ public final class HybridAnalyzer {
         summary.put("gradle_version_catalogs", catalogCount);
         summary.put("parsed_gradle_version_catalogs", parsedCatalogCount);
         summary.put("gradle_catalog_libraries", catalogLibraryCount);
+        summary.put("gradle_projects_declared", gradleProjectCount);
+        summary.put("gradle_project_dir_mappings", gradleProjectMappingCount);
+        summary.put("gradle_dependencies", gradleDependencyCount);
+        summary.put("gradle_unresolved_declarations", gradleUnresolvedCount);
+        summary.put("gradle_convention_plugin_candidates", gradleConventionPluginCount);
         summary.put("maven_parent_resolved", resolvedParentCount);
         summary.put("maven_dependency_declarations", mavenDependencyCount);
         summary.put("maven_bom_imports", mavenBomImportCount);
@@ -317,8 +342,10 @@ public final class HybridAnalyzer {
     }
 
     private static Map<String, Object> parseGradle(
+            Path root,
             String path,
             String source,
+            Map<String, Map<String, Object>> catalogAliases,
             List<Map<String, Object>> diagnostics
     ) {
         List<String> errors = new ArrayList<>();
@@ -345,7 +372,21 @@ public final class HybridAnalyzer {
         output.put("parser", "OpenRewrite GradleParser 8.90.4");
         output.put("parsed", valid);
         output.put("diagnostics", errors);
+        output.put("static_model", GradleStaticModel.parse(root, path, source, catalogAliases));
         return output;
+    }
+
+    private static long gradleModelCount(List<Map<String, Object>> buildFiles, String countName) {
+        return buildFiles.stream()
+                .filter(item -> "gradle".equals(item.get("build_system")))
+                .map(item -> item.get("static_model"))
+                .filter(Map.class::isInstance)
+                .map(Map.class::cast)
+                .map(item -> item.get("counts"))
+                .filter(Map.class::isInstance)
+                .map(Map.class::cast)
+                .mapToLong(counts -> ((Number) counts.getOrDefault(countName, 0)).longValue())
+                .sum();
     }
 
     private static Map<String, Object> parsePom(
@@ -410,14 +451,20 @@ public final class HybridAnalyzer {
                 || name.equals("settings.gradle")
                 || name.equals("settings.gradle.kts")
                 || (name.endsWith(".versions.toml") && path.getParent() != null
-                && "gradle".equals(path.getParent().getFileName().toString()));
+                && "gradle".equals(path.getParent().getFileName().toString()))
+                || isConventionPluginFile(path);
     }
 
     private static boolean isGradleFile(String path) {
         return path.endsWith("build.gradle")
                 || path.endsWith("build.gradle.kts")
                 || path.endsWith("settings.gradle")
-                || path.endsWith("settings.gradle.kts");
+                || path.endsWith("settings.gradle.kts")
+                || isConventionPluginFile(Path.of(path));
+    }
+
+    private static boolean isConventionPluginFile(Path path) {
+        return GradleStaticModel.isConventionPluginFile(path.toString().replace('\\', '/'));
     }
 
     private static boolean isIgnored(Path root, Path file) {

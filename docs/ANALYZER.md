@@ -22,7 +22,7 @@ The Python output uses schema version 1.0.0 at engine/analyzer/schema/inventory.
 
 See [engine/analyzer-java/README.md](../engine/analyzer-java/README.md) for build and run instructions.
 
-The hybrid output uses schema version 1.4.0 at engine/analyzer-java/schema/hybrid-inventory.schema.json. It includes Java AST declarations, Gradle syntax, Gradle version catalogs, and a partial static Maven model.
+The hybrid output uses schema version 1.5.0 at engine/analyzer-java/schema/hybrid-inventory.schema.json. It includes Java AST declarations, Gradle syntax, Gradle version catalogs, and a partial static Maven model.
 
 ## Maven model boundaries
 
@@ -57,7 +57,7 @@ CI runs Python unit tests and fixtures, compiles the Java 21 module, parses Java
 
 ## Known limitations
 
-- Gradle project-directory mapping, computed declarations, convention plugins, and settings evaluation remain incomplete.
+- Gradle computed declarations and settings evaluation remain incomplete. Convention plugins are reported as path-derived candidates only; plugin application and effective plugin identity are not inferred.
 - Maven remote parents, external BOM imports, profile activation, repositories, effective plugin configuration, and dependency mediation remain incomplete.
 - Java method calls and method references are resolved on a best-effort basis through JavaParser Symbol Solver against discovered workspace source roots and the running JDK. Each reference records a qualified method signature, return/parameter types, source path/line, and whether the declaration came from workspace source or the JDK.
 - External dependency JARs are not downloaded or added to the type solver. Calls relying on APIs outside workspace sources and JDK remain unresolved; that state is not proof that the API does not exist.

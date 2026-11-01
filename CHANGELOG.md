@@ -7,6 +7,8 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 ## [Unreleased]
 
 ### Added
+- Added literal Gradle static-model inventory for settings includes, includeBuild declarations, safe projectDir mappings, plugins, dependencies, version-catalog alias links, and precompiled convention-plugin candidates; computed expressions remain explicit unresolved evidence.
+- Added Gradle model regression checks for settings, mappings, catalog aliases, dependencies, plugins, and convention-plugin candidate discovery. Analyzer version is now 0.6.0 and hybrid inventory schema is 1.5.0.
 - Added JavaParser Symbol Solver 3.28.2 for best-effort method-call/method-reference resolution against discovered workspace source roots and JDK APIs, preserving qualified signatures and source-line evidence.
 - Added dependency-free regression checks for workspace/JDK method identity and explicit unresolved symbols. Hybrid inventory schema is now 1.4.0 and analyzer version is 0.5.0.
 - Added deterministic dependency-graph output (graph schema 1.0.0) for Java source/type/import and Maven module/parent/dependency relationships, including file/line evidence, declaration provenance, and explicit unresolved/ambiguous states.

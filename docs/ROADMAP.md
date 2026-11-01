@@ -32,7 +32,9 @@ Deliverables:
 - [x] Initial fixture corpus for Maven, Gradle, nested, mixed, and malformed projects.
 - [x] Add literal Gradle version-catalog parsing for versions, libraries, plugins, bundles, and version references.
 - [x] Add safe workspace-relative Maven parent resolution, inherited properties/dependencyManagement, BOM import inventory, and static profile activation metadata.
-- [ ] Improve Gradle project-directory mapping, computed declarations, and convention-plugin discovery.
+- [x] Add literal Gradle settings model extraction for included projects, included builds, safe projectDir mappings, literal plugin/dependency declarations, and version-catalog alias links.
+- [x] Discover precompiled convention-plugin script candidates with path-derived identity explicitly marked as inferred.
+- [ ] Support Gradle computed declarations and settings evaluation only if a non-executing and explainable evidence strategy is available.
 - [ ] Add remote Maven parent/BOM resolution and effective-model parity only in a separately approved, network-controlled phase.
 - [x] Add first-pass JavaParser AST signals for packages, imports, type/method declarations, method-call names, language features, and source lines.
 - [x] Add OpenRewrite syntax parsing for Gradle Groovy/Kotlin scripts and Maven POM XML, without build execution.
