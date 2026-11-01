@@ -4,15 +4,16 @@
   "type": "object",
   "required": ["schema_version", "analyzer", "snapshot", "summary", "java_sources", "build_files", "diagnostics"],
   "properties": {
-    "schema_version": { "const": "1.1.0" },
+    "schema_version": { "const": "1.2.0" },
     "analyzer": {
       "type": "object",
-      "required": ["name", "version", "java_parser", "openrewrite"],
+      "required": ["name", "version", "java_parser", "openrewrite", "toml_parser"],
       "properties": {
         "name": { "type": "string" },
         "version": { "type": "string" },
         "java_parser": { "type": "string" },
-        "openrewrite": { "type": "string" }
+        "openrewrite": { "type": "string" },
+        "toml_parser": { "type": "string" }
       },
       "additionalProperties": false
     },
@@ -26,7 +27,13 @@
     },
     "summary": {
       "type": "object",
-      "required": ["files_scanned", "java_files", "parsed_java_files", "gradle_files", "parsed_gradle_files", "maven_files", "parsed_maven_files", "java_type_declarations", "java_method_declarations", "diagnostics", "file_limit_reached", "skipped_large_files"],
+      "required": [
+        "files_scanned", "java_files", "parsed_java_files", "gradle_files", "parsed_gradle_files",
+        "maven_files", "parsed_maven_files", "gradle_version_catalogs", "parsed_gradle_version_catalogs",
+        "gradle_catalog_libraries", "maven_parent_resolved", "maven_dependency_declarations",
+        "maven_bom_imports", "java_type_declarations", "java_method_declarations",
+        "diagnostics", "file_limit_reached", "skipped_large_files"
+      ],
       "properties": {
         "files_scanned": { "type": "integer", "minimum": 0 },
         "java_files": { "type": "integer", "minimum": 0 },
@@ -35,6 +42,12 @@
         "parsed_gradle_files": { "type": "integer", "minimum": 0 },
         "maven_files": { "type": "integer", "minimum": 0 },
         "parsed_maven_files": { "type": "integer", "minimum": 0 },
+        "gradle_version_catalogs": { "type": "integer", "minimum": 0 },
+        "parsed_gradle_version_catalogs": { "type": "integer", "minimum": 0 },
+        "gradle_catalog_libraries": { "type": "integer", "minimum": 0 },
+        "maven_parent_resolved": { "type": "integer", "minimum": 0 },
+        "maven_dependency_declarations": { "type": "integer", "minimum": 0 },
+        "maven_bom_imports": { "type": "integer", "minimum": 0 },
         "java_type_declarations": { "type": "integer", "minimum": 0 },
         "java_method_declarations": { "type": "integer", "minimum": 0 },
         "diagnostics": { "type": "integer", "minimum": 0 },

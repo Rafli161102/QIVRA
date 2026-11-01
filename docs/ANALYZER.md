@@ -1,11 +1,12 @@
 # QIVRA static and hybrid repository analyzer
 
-P0.2 has two complementary local analysis paths:
+P0.2 combines three complementary local analysis paths:
 
-- Python scanner: lightweight metadata discovery using Python 3.10+ standard library.
-- Java hybrid parser: Java 21 module using JavaParser for Java AST inventory and OpenRewrite parsers for Gradle Groovy/Kotlin and Maven POM XML.
+- Python scanner: lightweight Maven/Gradle metadata discovery using Python 3.10+ standard library.
+- Java hybrid parser: Java 21 module using JavaParser for Java AST inventory and OpenRewrite for Gradle Groovy/Kotlin and Maven POM XML syntax.
+- Build-model intelligence: Tomlj parses Gradle version catalogs; a hardened JDK XML parser resolves only safe workspace-relative Maven parents and statically merges visible properties and dependency management.
 
-Neither path executes customer build scripts or application code.
+No path executes customer build scripts or application code.
 
 ## Python metadata scanner
 
@@ -21,36 +22,41 @@ The Python output uses schema version 1.0.0 at engine/analyzer/schema/inventory.
 
 See [engine/analyzer-java/README.md](../engine/analyzer-java/README.md) for build and run instructions.
 
-The hybrid output uses schema version 1.1.0 at engine/analyzer-java/schema/hybrid-inventory.schema.json. It adds:
-- Java package and import declarations;
-- type declarations (classes, interfaces, enums, annotations, records);
-- method declarations and method-call-name counts;
-- source line evidence and initial language-feature signals;
-- syntax parsing for Gradle Groovy/Kotlin files and Maven POM XML.
+The hybrid output uses schema version 1.2.0 at engine/analyzer-java/schema/hybrid-inventory.schema.json. It includes Java AST declarations, Gradle syntax, Gradle version catalogs, and a partial static Maven model.
+
+## Maven model boundaries
+
+The Maven result is a **partial static model**, not Maven's effective model. It resolves only a local \`parent.relativePath\` inside the workspace, with symlink/path containment, cycle, and depth checks. It does not query remote repositories, resolve remote parents/BOMs, activate profiles, calculate full Maven interpolation semantics, mediate dependencies, or resolve transitive dependencies.
+
+POM properties are not dumped as arbitrary values because they may contain credentials or internal configuration. The inventory records property keys and only emits specific resolved coordinate/dependency fields required for evidence.
+
+## Gradle boundaries
+
+The version catalog parser handles literal TOML version strings, library/plugin aliases, bundles, and \`version.ref\` references. It does not evaluate Gradle scripts, determine whether an alias is used, resolve computed catalog expressions, or create an effective Gradle model.
 
 ## Evidence and interpretation
 
-Every Java source record names its repository-relative path and uses source line numbers when the AST provides them. Build parser results also carry repository-relative evidence paths. Parse errors include the source file path.
+Every source/build record names its repository-relative path. Maven parent and dependency-management resolutions include provenance. Parse errors and unresolved relationships are explicit diagnostics.
 
-An empty Java settings object in the Python inventory is not a specific Java runtime version. A Java AST parse success proves syntax acceptance at the configured parser language level, not successful compilation, API compatibility, dependency resolution, runtime behavior, or migration safety.
+A parsed build file does not prove that Maven or Gradle can configure or build the project. A resolved local Maven parent does not imply that external BOMs or transitive dependencies are resolved. A Java AST parse does not prove runtime compatibility or migration safety.
 
 ## Safety boundary
 
-- Build files are treated as untrusted text.
-- No Maven or Gradle executable, wrapper, plugin, lifecycle goal, build task, customer test, or customer application code is invoked.
-- The hybrid POM pass uses OpenRewrite XML parsing only; it does not resolve Maven parents, profiles, BOMs, or transitive dependencies.
-- The hybrid Gradle pass parses script syntax only; it does not create an effective Gradle model.
-- The Java parser builds ASTs but does not resolve symbols or compile source files.
+- Build files are untrusted input.
+- No Maven/Gradle executable, wrapper, plugin, lifecycle goal, build task, customer test, or application code is invoked.
+- XML external entities, DTDs, external schemas, and XInclude are disabled for the static Maven model pass.
+- Maven parent lookup is local-only and rejects workspace escape and symlink traversal.
+- No remote dependency or BOM resolution occurs.
 - The Java hybrid scan has file-count and per-file size limits and skips symlinks and common generated/dependency directories.
-
-## Known limitations
-
-- Gradle expressions, version catalogs, variables, convention plugins, and computed dependency coordinates are not resolved.
-- Maven parent inheritance, active profiles, BOMs, mediation, and effective POM behavior are not calculated.
-- Method-call names are not resolved to concrete API symbols.
-- Framework, runtime reachability, test coverage, and semantic compatibility are not inferred.
-- Inventory results are not modernization recommendations; P0.3 adds target-profile assessment and explicit uncertainty handling.
 
 ## Validation
 
-CI runs Python unit tests and fixture inventory checks, then compiles the Java hybrid module, parses representative Java/Gradle/POM fixtures, and validates the combined JSON summary. P0.2 remains in progress until broader fixture coverage and representative repository validation are complete.
+CI runs Python unit tests and fixtures, compiles the Java 21 module, parses Java/Gradle/POM/TOML fixtures, and validates version-catalog references, local Maven parent inheritance, dependency version provenance, BOM declarations, and non-activation of Maven profiles.
+
+## Known limitations
+
+- Gradle project-directory mapping, computed declarations, convention plugins, and settings evaluation remain incomplete.
+- Maven remote parents, external BOM imports, profile activation, repositories, effective plugin configuration, and dependency mediation remain incomplete.
+- Java method-call names are not resolved API identities.
+- Framework/runtime reachability and semantic compatibility are not inferred.
+- P0.3 adds target-profile assessment and explicit uncertainty handling.

@@ -43,8 +43,8 @@ import static com.github.javaparser.ParseStart.COMPILATION_UNIT;
 import static com.github.javaparser.Providers.provider;
 
 public final class HybridAnalyzer {
-    private static final String VERSION = "0.2.0";
-    private static final String SCHEMA_VERSION = "1.1.0";
+    private static final String VERSION = "0.3.0";
+    private static final String SCHEMA_VERSION = "1.2.0";
     private static final int MAX_FILES = 20_000;
     private static final long MAX_FILE_BYTES = 2_000_000L;
     private static final Set<String> IGNORED_DIRECTORIES = Set.of(
@@ -128,10 +128,12 @@ public final class HybridAnalyzer {
 
             if (path.endsWith(".java")) {
                 javaSources.add(parseJava(javaParser, path, source, diagnostics));
+            } else if (isVersionCatalog(file)) {
+                buildFiles.add(BuildModelIntelligence.parseVersionCatalog(path, source, diagnostics));
             } else if (isGradleFile(path)) {
                 buildFiles.add(parseGradle(path, source, diagnostics));
             } else if (path.endsWith("pom.xml")) {
-                buildFiles.add(parsePom(path, source, diagnostics));
+                buildFiles.add(parsePom(root, path, source, diagnostics));
             }
         }
 
@@ -151,6 +153,22 @@ public final class HybridAnalyzer {
                 .filter(item -> "maven".equals(item.get("build_system")) && Boolean.TRUE.equals(item.get("parsed")))
                 .count();
 
+        long catalogCount = buildFiles.stream().filter(item -> "gradle_version_catalog".equals(item.get("build_system"))).count();
+        long parsedCatalogCount = buildFiles.stream().filter(item -> "gradle_version_catalog".equals(item.get("build_system")) && Boolean.TRUE.equals(item.get("parsed"))).count();
+        long catalogLibraryCount = buildFiles.stream().filter(item -> "gradle_version_catalog".equals(item.get("build_system")))
+                .map(item -> item.get("counts")).filter(Map.class::isInstance).map(Map.class::cast)
+                .mapToLong(counts -> ((Number) counts.getOrDefault("libraries", 0)).longValue()).sum();
+        long resolvedParentCount = buildFiles.stream().filter(item -> "maven".equals(item.get("build_system")))
+                .map(item -> item.get("static_model")).filter(Map.class::isInstance).map(Map.class::cast)
+                .map(item -> item.get("parent")).filter(Map.class::isInstance).map(Map.class::cast)
+                .filter(parent -> "workspace_resolved".equals(parent.get("resolution"))).count();
+        long mavenDependencyCount = buildFiles.stream().filter(item -> "maven".equals(item.get("build_system")))
+                .map(item -> item.get("static_model")).filter(Map.class::isInstance).map(Map.class::cast)
+                .map(item -> item.get("dependencies")).filter(List.class::isInstance).map(List.class::cast).mapToLong(List::size).sum();
+        long mavenBomImportCount = buildFiles.stream().filter(item -> "maven".equals(item.get("build_system")))
+                .map(item -> item.get("static_model")).filter(Map.class::isInstance).map(Map.class::cast)
+                .map(item -> item.get("bom_imports")).filter(List.class::isInstance).map(List.class::cast).mapToLong(List::size).sum();
+
         Map<String, Object> summary = new LinkedHashMap<>();
         summary.put("files_scanned", candidates.size());
         summary.put("java_files", javaSources.size());
@@ -159,6 +177,12 @@ public final class HybridAnalyzer {
         summary.put("parsed_gradle_files", parsedGradleFiles);
         summary.put("maven_files", buildFiles.stream().filter(item -> "maven".equals(item.get("build_system"))).count());
         summary.put("parsed_maven_files", parsedPomFiles);
+        summary.put("gradle_version_catalogs", catalogCount);
+        summary.put("parsed_gradle_version_catalogs", parsedCatalogCount);
+        summary.put("gradle_catalog_libraries", catalogLibraryCount);
+        summary.put("maven_parent_resolved", resolvedParentCount);
+        summary.put("maven_dependency_declarations", mavenDependencyCount);
+        summary.put("maven_bom_imports", mavenBomImportCount);
         summary.put("java_type_declarations", typeCount);
         summary.put("java_method_declarations", methodCount);
         summary.put("diagnostics", diagnostics.size());
@@ -170,6 +194,7 @@ public final class HybridAnalyzer {
         analyzer.put("version", VERSION);
         analyzer.put("java_parser", "com.github.javaparser:javaparser-core:3.28.2");
         analyzer.put("openrewrite", "org.openrewrite:rewrite-gradle,rewrite-xml:8.90.4");
+        analyzer.put("toml_parser", "org.tomlj:tomlj:1.1.1");
 
         Map<String, Object> snapshot = new LinkedHashMap<>();
         snapshot.put("recognized_files_sha256", toHex(digest.digest()));
@@ -309,6 +334,7 @@ public final class HybridAnalyzer {
     }
 
     private static Map<String, Object> parsePom(
+            Path root,
             String path,
             String source,
             List<Map<String, Object>> diagnostics
@@ -334,6 +360,7 @@ public final class HybridAnalyzer {
         output.put("parser", "OpenRewrite XmlParser 8.90.4");
         output.put("parsed", valid);
         output.put("diagnostics", errors);
+        output.put("static_model", BuildModelIntelligence.parseMavenPom(root, root.resolve(path), path, source, diagnostics));
         return output;
     }
 
@@ -353,6 +380,12 @@ public final class HybridAnalyzer {
         return node.getBegin().map(position -> position.line).orElse(-1);
     }
 
+    private static boolean isVersionCatalog(Path path) {
+        Path parent = path.getParent();
+        return parent != null && "gradle".equals(parent.getFileName().toString())
+                && path.getFileName().toString().endsWith(".versions.toml");
+    }
+
     private static boolean isSupportedFile(Path path) {
         String name = path.getFileName().toString();
         return name.endsWith(".java")
@@ -360,7 +393,9 @@ public final class HybridAnalyzer {
                 || name.equals("build.gradle")
                 || name.equals("build.gradle.kts")
                 || name.equals("settings.gradle")
-                || name.equals("settings.gradle.kts");
+                || name.equals("settings.gradle.kts")
+                || (name.endsWith(".versions.toml") && path.getParent() != null
+                && "gradle".equals(path.getParent().getFileName().toString()));
     }
 
     private static boolean isGradleFile(String path) {

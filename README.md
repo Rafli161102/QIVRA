@@ -5,7 +5,7 @@
 
 QIVRA is an engineering platform for understanding, planning, and executing software modernization. It helps teams inspect legacy codebases, identify technical risk, apply controlled transformations, and verify results with reproducible validation.
 
-> **Project status:** Pre-alpha. The product foundation, design direction, and first public website are documented and under development. The analyzer and modernization engine have not been released.
+> **Project status:** Pre-alpha. The product foundation, design direction, and first public website are documented and under development. The analyzer remains a pre-alpha local prototype; the hosted modernization engine has not been released.
 
 ## Product capabilities (target)
 
@@ -43,7 +43,7 @@ QIVRA's approved visual direction is **Engineering Atlas**: an industrial-editor
 
 Its signature motif, **Migration Trace**, explains the planned path from legacy source through inspection, transformation, and validation. The direction uses a restrained palette and calm motion. It does not rely on generic SaaS templates or fabricated product evidence.
 
-Read [DESIGN.md](DESIGN.md) for the authoritative visual direction and [docs/WEBSITE-DESIGN-BRIEF.md](docs/WEBSITE-DESIGN-BRIEF.md) for the recorded product-owner decision. The design direction is approved, but logo and custom visual assets remain separate work.
+Read [Agent Skills](docs/AGENT_SKILLS.md) and the [repository reuse audit](docs/REPOSITORY_REUSE_AUDIT.md) for QIVRA's project-scoped AI workflows and cross-project reuse decisions. The local analyzer now includes Gradle version-catalog inventory and bounded workspace-relative Maven parent/dependency-management analysis. Read [docs/ANALYZER.md](docs/ANALYZER.md) for limits. Read [DESIGN.md](DESIGN.md) for the authoritative visual direction and [docs/WEBSITE-DESIGN-BRIEF.md](docs/WEBSITE-DESIGN-BRIEF.md) for the recorded product-owner decision. The design direction is approved, but logo and custom visual assets remain separate work.
 
 ## Website
 

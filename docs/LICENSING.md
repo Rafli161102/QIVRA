@@ -42,6 +42,15 @@ Do not infer the license of a Maven artifact from the license of a similarly nam
 - The broader OpenRewrite ecosystem includes other modules, recipe packs, plugins, and commercial offerings. They must not be assumed to share one license.
 - No recipes, plugins, OpenRewrite Maven model resolver, or source files are included in this integration.
 
+### Tomlj
+
+- Upstream: https://github.com/tomlj/tomlj
+- Release: 1.1.1
+- Artifact: org.tomlj:tomlj:1.1.1
+- Purpose: parse Gradle version-catalog TOML.
+- License: Apache-2.0; preserve LICENSES/TOMLJ-APACHE-2.0.txt.
+- No Tomlj source files are copied into QIVRA.
+
 The selected parser modules are pinned in engine/analyzer-java/pom.xml. Their transitive dependencies still require package-level license and security review before production release. The integration is a pre-alpha static parser prototype, not a released migration engine.
 
 ## Vendored agent guidance: Anti Slop

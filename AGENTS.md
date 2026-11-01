@@ -19,3 +19,17 @@ For UI work, read the product-owner-authored `DESIGN.md` before choosing visual 
 
 To update the project-local skills from the official installer, run `npx antislop-ai --update` from the QIVRA repository root (Node.js 18+). Review the resulting changes and license notices before committing. Start a new agent session after installation or update.
 <!-- antislop:end -->
+
+
+## QIVRA engineering skills
+
+For non-UI engineering tasks, read \`.agents/skills/qivra-using-agent-skills/SKILL.md\` first, then load the smallest relevant workflow:
+- Repository discovery: \`.agents/skills/qivra-repository-intelligence/SKILL.md\`
+- Maven/Gradle and version catalogs: \`.agents/skills/qivra-build-model-analysis/SKILL.md\`
+- Evidence-backed module/dependency graph: \`.agents/skills/qivra-graph-evidence/SKILL.md\`
+- Target compatibility assessment: \`.agents/skills/qivra-modernization-assessment/SKILL.md\`
+- Source transformation approval: \`.agents/skills/qivra-safe-transformation-review/SKILL.md\`
+- AI provider/data boundaries: \`.agents/skills/qivra-ai-provider-safety/SKILL.md\`
+- Testing and releases: \`.agents/skills/qivra-test-and-release/SKILL.md\`
+
+These files guide AI coding agents. They do not replace runtime authorization, security controls, deterministic rules, or tests. See \`docs/AGENT_SKILLS.md\` and \`docs/REPOSITORY_REUSE_AUDIT.md\`.
