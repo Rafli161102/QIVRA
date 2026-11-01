@@ -43,8 +43,8 @@ import static com.github.javaparser.ParseStart.COMPILATION_UNIT;
 import static com.github.javaparser.Providers.provider;
 
 public final class HybridAnalyzer {
-    private static final String VERSION = "0.6.0";
-    private static final String SCHEMA_VERSION = "1.5.0";
+    private static final String VERSION = "0.7.0";
+    private static final String SCHEMA_VERSION = "1.6.0";
     private static final int MAX_FILES = 20_000;
     private static final long MAX_FILE_BYTES = 2_000_000L;
     private static final Set<String> IGNORED_DIRECTORIES = Set.of(

@@ -37,9 +37,9 @@ mvn -q -f engine/analyzer-java/pom.xml org.codehaus.mojo:exec-maven-plugin:3.5.0
 
 - Java package/import/type/method declarations, method-call-name counts, language-feature signals, and source line evidence.
 - Best-effort method-call and method-reference identities for workspace source and JDK APIs, with explicit unresolved states and source locations.
-- Groovy/Kotlin Gradle build and settings syntax parsing with literal static-model extraction for included projects, includeBuild paths, safe projectDir mappings, plugins, dependencies, and convention-plugin candidates.
-- Gradle version catalogs: literal versions, library/plugin aliases, bundles, and version references; aliases are linked to build dependency/plugin declarations when the accessor is statically recognizable.
-- Maven POM XML syntax parsing plus partial static model: local relative parent, inherited properties and dependencyManagement, dependency version provenance, BOM import inventory, plugins, modules, and profile activation metadata.
+- Groovy/Kotlin Gradle build and settings syntax parsing with literal static-model extraction for included projects, includeBuild paths, safe projectDir mappings, plugins, dependencies, version-catalog bundles, and convention-plugin candidates; both parenthesized Kotlin and common no-parentheses Groovy declarations are supported.
+- Gradle version catalogs: literal versions, library/plugin/bundle aliases, and version references; recognized aliases are linked to build dependency/plugin declarations when the accessor is statically recognizable.
+- Maven POM XML syntax parsing plus partial static model: local relative parent, partial literal group/version inheritance from declared external parents, inherited properties and dependencyManagement, dependency version provenance, BOM import inventory, plugins, modules, and profile activation metadata.
 - Deterministic snapshot digest, file-count and per-file-size limits, and evidence-backed diagnostics.
 - Provenance-labelled graph nodes and edges for Java type declarations/imports and Maven parent, dependency, and aggregator-module relationships. Unresolved and ambiguous targets stay explicit.
 

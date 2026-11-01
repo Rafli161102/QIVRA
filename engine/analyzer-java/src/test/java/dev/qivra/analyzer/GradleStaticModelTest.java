@@ -20,6 +20,7 @@ public final class GradleStaticModelTest {
     public static void main(String[] args) throws Exception {
         extractsLiteralSettingsAndProjectDirectoryMappings();
         extractsDependenciesPluginsAndVersionCatalogAliases();
+        extractsGroovyDslWithoutParentheses();
         discoversPrecompiledConventionPluginCandidates();
         System.out.println("Gradle static model regression checks passed.");
     }
@@ -32,6 +33,7 @@ public final class GradleStaticModelTest {
                     // include(":comment-only")
                     rootProject.name = "sample-root"
                     include(":app", ":shared")
+                    include ":extra", ":other"
                     include(":dynamic:" + providers.gradleProperty("extra").get())
                     project(":app").projectDir = file("modules/app")
                     project(":generated").projectDir = layout.projectDirectory.dir("generated")
@@ -44,11 +46,14 @@ public final class GradleStaticModelTest {
             check("sample-root".equals(model.get("root_project_name")),
                     "literal rootProject.name should be captured");
             List<Map<String, Object>> projects = maps(model.get("included_projects"));
-            check(projects.size() == 2, "only literal include paths should become included projects");
+            check(projects.size() == 4, "Kotlin and Groovy literal include paths should become included projects");
             check(projects.stream().anyMatch(item -> ":app".equals(item.get("project_path"))),
                     "literal project path missing");
             check(projects.stream().anyMatch(item -> ":shared".equals(item.get("project_path"))),
                     "second literal project path missing");
+            check(projects.stream().anyMatch(item -> ":extra".equals(item.get("project_path")))
+                            && projects.stream().anyMatch(item -> ":other".equals(item.get("project_path"))),
+                    "multiple Groovy include arguments should be inventoried");
 
             List<Map<String, Object>> mappings = maps(model.get("project_directory_mappings"));
             Map<String, Object> appMapping = mappings.stream()
@@ -89,6 +94,10 @@ public final class GradleStaticModelTest {
                 "id", "org.jetbrains.kotlin.jvm",
                 "version", "2.0.21"
         )));
+        catalog.put("bundles", List.of(Map.of(
+                "alias", "test-kit",
+                "members", List.of("junit-jupiter", "mockito-core")
+        )));
         Map<String, Map<String, Object>> aliases =
                 GradleStaticModel.catalogAliasIndex(List.of(catalog));
 
@@ -102,6 +111,7 @@ public final class GradleStaticModelTest {
                     implementation("org.example:core:1.4.2")
                     api(project(":shared"))
                     testImplementation(libs.junit.jupiter)
+                    testImplementation(libs.bundles.test.kit)
                     runtimeOnly("org.example:dynamic:VERSION_TOKEN")
                 }
                 """.replace("VERSION_TOKEN", "$" + "{versions.dynamic}");
@@ -125,7 +135,7 @@ public final class GradleStaticModelTest {
                 "plugin version-catalog alias should resolve");
 
         List<Map<String, Object>> dependencies = maps(model.get("dependencies"));
-        check(dependencies.size() == 4, "all four dependency declarations should be inventoried");
+        check(dependencies.size() == 5, "all five dependency declarations should be inventoried");
         check(dependencies.stream().anyMatch(item -> "literal_coordinate".equals(item.get("resolution"))
                         && "org.example".equals(item.get("group"))
                         && "core".equals(item.get("artifact"))
@@ -140,12 +150,63 @@ public final class GradleStaticModelTest {
                 "library version-catalog alias should resolve");
         check(dependencies.stream().anyMatch(item -> "dynamic_string_interpolation".equals(item.get("resolution"))),
                 "dynamic dependency version must remain unresolved");
+        check(dependencies.stream().anyMatch(item -> "version_catalog_bundle_resolved".equals(item.get("resolution"))
+                        && "test-kit".equals(item.get("catalog_alias"))
+                        && item.get("bundle_members") instanceof List<?> members
+                        && members.size() == 2),
+                "version-catalog bundle aliases should be linked to their literal members");
         check(number(map(model.get("counts")).get("unresolved_expressions")) >= 1,
                 "dynamic dependency expression should have unresolved evidence");
     }
 
+    private static void extractsGroovyDslWithoutParentheses() {
+        Map<String, Object> catalog = new LinkedHashMap<>();
+        catalog.put("build_system", "gradle_version_catalog");
+        catalog.put("libraries", List.of(Map.of(
+                "alias", "junit-jupiter",
+                "group", "org.junit.jupiter",
+                "artifact", "junit-jupiter",
+                "version", "5.11.4",
+                "version_resolved", true
+        )));
+        Map<String, Map<String, Object>> aliases =
+                GradleStaticModel.catalogAliasIndex(List.of(catalog));
+
+        String script = """
+                plugins {
+                    id "java" version "17.0.1"
+                    id "com.acme.build-conventions"
+                }
+                dependencies {
+                    implementation "com.acme:core:1.4.0"
+                    api project(":shared")
+                    testImplementation libs.junit.jupiter
+                }
+                """;
+        Map<String, Object> model = GradleStaticModel.parse(
+                Path.of(".").toAbsolutePath().normalize(), "build.gradle", script, aliases
+        );
+
+        List<Map<String, Object>> plugins = maps(model.get("plugins"));
+        check(plugins.stream().anyMatch(item -> "java".equals(item.get("plugin_id"))
+                        && "17.0.1".equals(item.get("version"))),
+                "Groovy plugin ID and literal version should be extracted");
+        check(plugins.stream().anyMatch(item -> "com.acme.build-conventions".equals(item.get("plugin_id"))),
+                "Groovy plugin ID without a version should be extracted");
+
+        List<Map<String, Object>> dependencies = maps(model.get("dependencies"));
+        check(dependencies.stream().anyMatch(item -> "com.acme:core:1.4.0".equals(item.get("coordinate"))),
+                "Groovy dependency coordinate without parentheses should be extracted");
+        check(dependencies.stream().anyMatch(item -> "literal_project_dependency".equals(item.get("resolution"))
+                        && ":shared".equals(item.get("project_path"))),
+                "Groovy project dependency without parentheses should be extracted");
+        check(dependencies.stream().anyMatch(item -> "version_catalog_alias_resolved".equals(item.get("resolution"))
+                        && "junit-jupiter".equals(item.get("catalog_alias"))),
+                "Groovy version-catalog dependency without parentheses should resolve");
+    }
+
     private static void discoversPrecompiledConventionPluginCandidates() {
-        String path = "build-logic/src/main/kotlin/com/acme/java-conventions.gradle.kts";
+        String path = "build-logic-commons/gradle-plugin/src/main/kotlin/gradlebuild.repositories.gradle.kts";
         check(GradleStaticModel.isConventionPluginFile(path),
                 "precompiled convention plugin script should be discovered");
         Map<String, Object> model = GradleStaticModel.parse(
@@ -156,7 +217,7 @@ public final class GradleStaticModelTest {
         );
         List<Map<String, Object>> candidates = maps(model.get("convention_plugin_candidates"));
         check(candidates.size() == 1, "convention plugin candidate metadata missing");
-        check("com.acme.java-conventions".equals(candidates.get(0).get("plugin_id_candidate")),
+        check("gradlebuild.repositories".equals(candidates.get(0).get("plugin_id_candidate")),
                 "precompiled plugin ID candidate should be inferred from its relative path");
         check("inferred_from_path_only".equals(candidates.get(0).get("identity_status")),
                 "path-derived plugin names must not be presented as verified plugin IDs");

@@ -91,6 +91,17 @@
               <classpathScope>test</classpathScope>
             </configuration>
           </execution>
+          <execution>
+            <id>maven-partial-inheritance-regression-tests</id>
+            <phase>test</phase>
+            <goals>
+              <goal>java</goal>
+            </goals>
+            <configuration>
+              <mainClass>dev.qivra.analyzer.MavenPartialInheritanceTest</mainClass>
+              <classpathScope>test</classpathScope>
+            </configuration>
+          </execution>
         </executions>
       </plugin>
     </plugins>

@@ -330,9 +330,14 @@ final class BuildModelIntelligence {
         }
 
         Map<String, String> builtins = new TreeMap<>();
-        String rawGroup = firstNonBlank(text(project, "groupId"), parentModel == null ? null : parentModel.groupId);
+        // If the local POM inherits coordinates from an external parent, retain the
+        // parent's declared group/version as partial inherited identity. This does not
+        // resolve or claim the external parent itself.
+        String rawGroup = firstNonBlank(text(project, "groupId"),
+                parentModel == null ? parentGroup : parentModel.groupId);
         String rawArtifact = text(project, "artifactId");
-        String rawVersion = firstNonBlank(text(project, "version"), parentModel == null ? null : parentModel.version);
+        String rawVersion = firstNonBlank(text(project, "version"),
+                parentModel == null ? parentVersion : parentModel.version);
         builtins.put("project.groupId", nullToEmpty(rawGroup));
         builtins.put("pom.groupId", nullToEmpty(rawGroup));
         builtins.put("project.artifactId", nullToEmpty(rawArtifact));
@@ -348,9 +353,11 @@ final class BuildModelIntelligence {
         properties.putAll(builtins);
         resolvePropertyMap(properties);
 
-        String groupId = resolve(firstNonBlank(text(project, "groupId"), parentModel == null ? null : parentModel.groupId), properties);
+        String groupId = resolve(firstNonBlank(text(project, "groupId"),
+                parentModel == null ? parentGroup : parentModel.groupId), properties);
         String artifactId = resolve(rawArtifact, properties);
-        String version = resolve(firstNonBlank(text(project, "version"), parentModel == null ? null : parentModel.version), properties);
+        String version = resolve(firstNonBlank(text(project, "version"),
+                parentModel == null ? parentVersion : parentModel.version), properties);
 
         Map<String, Map<String, Object>> managed = new LinkedHashMap<>();
         if (parentModel != null) {

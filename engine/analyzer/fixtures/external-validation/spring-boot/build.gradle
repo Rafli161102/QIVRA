@@ -1,0 +1,36 @@
+/*
+ * Copyright 2012-present the original author or authors.
+ */
+
+plugins {
+	id "base"
+}
+
+description = "Spring Boot Build"
+
+defaultTasks 'build'
+
+allprojects {
+	group = "org.springframework.boot"
+}
+
+subprojects {
+	apply plugin: "org.springframework.boot.conventions"
+
+	repositories {
+		mavenCentral()
+		maven {
+			name = "Shibboleth Releases"
+			url = "https://build.shibboleth.net/nexus/content/repositories/releases"
+			content {
+				includeGroup "org.opensaml"
+				includeGroup "net.shibboleth"
+			}
+		}
+		spring.mavenRepositories()
+	}
+
+	configurations.all {
+		resolutionStrategy.cacheChangingModulesFor 0, "minutes"
+	}
+}
