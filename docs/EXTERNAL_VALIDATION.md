@@ -19,7 +19,7 @@ The external snapshot portion of `scripts/check_hybrid_inventory.py` verifies:
 - Spring Boot's Groovy settings/build files parse, the literal root project name and includeBuild/project declarations are inventoried, and the Java source is parsed.
 - Gradle's Kotlin settings/build files and build-logic-commons script are discovered; path-derived convention plugin identity is marked as inferred.
 - Gradle's official Groovy/Kotlin catalog samples parse, plugin/library aliases link to the same pinned catalog snapshot, and `libs.bundles.groovy` retains its three literal member aliases.
-- Apache Maven's selected child POMs resolve their local parent chain from the checked-in snapshot. The external Maven parent of the root project remains unresolved, as no network lookup is attempted.
+- Apache Maven's selected child POMs resolve their local parent chain from the checked-in snapshot. The root POM inherits its declared group coordinate from an external parent, which remains unresolved; QIVRA retains that literal group as partial identity so its API child can still link to the local root POM without fetching the external parent.
 - Commons Lang's POM and Java source are parsed, while its external parent remains outside the workspace model.
 - Java method calls keep source file/line evidence; JDK/workspace-resolved identities and unresolved external references remain distinct.
 

@@ -7,6 +7,7 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 ## [Unreleased]
 
 ### Added
+- Added regression coverage and partial coordinate inheritance for Maven POMs whose own group/version are omitted but declared by an unresolved external parent. The external parent remains unresolved while workspace child POM matching can still use the declared identity.
 - Added version-catalog bundle dependency linking, broader precompiled convention-plugin discovery (including build-logic-commons layouts), and regression coverage for the Gradle Groovy no-parentheses DSL.
 - Added pinned, Apache-2.0 external repository snapshots for Spring Boot, Gradle, Apache Maven, and Commons Lang to exercise the hybrid analyzer without running upstream builds. Analyzer version is now 0.7.0 and hybrid inventory schema is 1.6.0.
 - Added literal Gradle static-model inventory for settings includes, includeBuild declarations, safe projectDir mappings, plugins, dependencies, version-catalog alias links, and precompiled convention-plugin candidates; computed expressions remain explicit unresolved evidence.
