@@ -59,3 +59,13 @@ Consult the package manifests for exact direct versions. The transitive dependen
 - No OpenRewrite source files are copied into QIVRA.
 
 The selected parser artifacts are pinned in engine/analyzer-java/pom.xml. Their transitive dependencies still require package-level license and security review before a production release. The source-analysis module is pre-alpha tooling, not a released customer migration service.
+
+## Tomlj
+
+- Project: https://github.com/tomlj/tomlj
+- Source release: 1.1.1
+- Artifact: org.tomlj:tomlj:1.1.1
+- Purpose: parse Gradle version-catalog TOML files.
+- License: Apache-2.0
+- Full license: LICENSES/TOMLJ-APACHE-2.0.txt
+- No Tomlj source files are copied into QIVRA.

@@ -7,9 +7,14 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 ## [Unreleased]
 
 ### Added
+- Added Gradle version-catalog TOML inventory for versions, library aliases, plugin aliases, bundles, and literal version references using Tomlj 1.1.1.
+- Added a hardened partial Maven static model for safe workspace-relative parent resolution, inherited properties and dependencyManagement, dependency version provenance, BOM import inventory, plugin declarations, and profile activation metadata.
+- Added eight QIVRA-specific Agent Skills for repository intelligence, build-model analysis, evidence graphs, modernization assessment, safe transformations, AI provider safety, and verification/release workflows.
+- Added an account-wide repository reuse audit documenting reusable patterns and explicit non-reuse boundaries.
+- Added Gradle version-catalog and Maven parent/dependency-management fixtures to the analyzer CI gate.
 - Added a hybrid Java source analyzer using JavaParser 3.28.2 for AST inventory and OpenRewrite 8.90.4 parser modules for Gradle Groovy/Kotlin and Maven POM XML syntax.
 - Added Java source fixtures for legacy-style classes, records, switch expressions, and malformed source, plus a combined analyzer CI gate.
-- Added versioned hybrid inventory schema 1.1.0, pinned upstream provenance documentation, and Apache-2.0 notices for the selected parser components.
+- Added versioned hybrid inventory schema 1.2.0, pinned upstream provenance documentation, and Apache-2.0 notices for the selected parser components.
 - Added the root npm workspace lockfile and deterministic dependency installation with `npm ci`.
 - Established the QIVRA product overview and initial Java modernization vertical slice.
 - Documented product boundaries, target architecture, security model, licensing review process, and milestone roadmap.

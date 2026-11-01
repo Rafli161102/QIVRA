@@ -28,6 +28,11 @@
       <artifactId>rewrite-xml</artifactId>
       <version>8.90.4</version>
     </dependency>
+    <dependency>
+      <groupId>org.tomlj</groupId>
+      <artifactId>tomlj</artifactId>
+      <version>1.1.1</version>
+    </dependency>
   </dependencies>
   <build>
     <plugins>
